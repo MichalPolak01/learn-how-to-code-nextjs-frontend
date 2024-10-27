@@ -27,43 +27,48 @@ export default function Page() {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData)
-        };
-
-        const response = await fetch(LOGIN_URL, requestOptions);
-
-        interface LoginResponse {
-            username?: string,
-            accessToken?: string,
-            refreshToken?: string,
-            detail?: string
-        };
-        let data: LoginResponse = {};
-
-        try {
-            data = await response.json();
-        } catch (error) { }
-
-        if (response.status == 200) {
-            auth.login(data.username, data.accessToken, data.refreshToken);
-            setLoginError(false);
-            // TODO Add toast
-            console.log("Login success");
-        } else if (response.status == 400 || response.status == 401) {
+        if (formData.email == "" || formData.password == "") {
             setLoginError(true);
-            setLoginMessage("Podany adres email lub hasło są niepoprawne. Sprawdź poprawność wprowadzoanych danych i spróbuj ponownie.");
-            // setLoginError(true);
-            // TODO Add toast
-            console.log("Login failed");
+            setLoginMessage("Aby się zalogować musisz podać email oraz hasło.");
         } else {
-            setLoginError(true);
-            setLoginMessage("Podczas logowania wystąpił nieoczekiwany błąd servera. Spróbuj ponownie później.");
-            console.log("Login failed");
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData)
+            };
+
+            const response = await fetch(LOGIN_URL, requestOptions);
+
+            interface LoginResponse {
+                username?: string,
+                accessToken?: string,
+                refreshToken?: string,
+                detail?: string
+            };
+            let data: LoginResponse = {};
+
+            try {
+                data = await response.json();
+            } catch (error) { }
+
+            if (response.status == 200) {
+                auth.login(data.username, data.accessToken, data.refreshToken);
+                setLoginError(false);
+                // TODO Add toast
+                console.log("Login success");
+            } else if (response.status == 400 || response.status == 401) {
+                setLoginError(true);
+                setLoginMessage("Podany adres email lub hasło są niepoprawne. Sprawdź poprawność wprowadzoanych danych i spróbuj ponownie.");
+                // setLoginError(true);
+                // TODO Add toast
+                console.log("Login failed");
+            } else {
+                setLoginError(true);
+                setLoginMessage("Podczas logowania wystąpił nieoczekiwany błąd servera. Spróbuj ponownie później.");
+                console.log("Login failed");
+            }
         }
     }
 
