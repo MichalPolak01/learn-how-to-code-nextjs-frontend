@@ -9,6 +9,7 @@ import { Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { validateEmail, validatePassword } from "@/lib/formValidators";
+import { useAuth } from "@/providers/authProvider";
 
 
 const REGISTER_URL = "api/register"
@@ -25,13 +26,18 @@ export default function Page() {
         password: "",
         confirmPassword: ""
     });
+    const [isUsernameInvalid, setIsUsernameInvalid] = useState(false);
+    const [isEmailInvalid, setIsEmailInvalid] = useState(false);
 
+    const auth = useAuth();
     const router = useRouter();
     const toggleVisibilityPassword = () => setIsPasswordVisible(!isPasswordVisible);
     const toggleVisibilityConfirmPassword = () => setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsUsernameInvalid(false);
+        setIsEmailInvalid(false);
 
         if (formData.username == "" || isInvalidEmail || isInvalidPassword || formData.confirmPassword == "") {
             setRegisterError(true);
@@ -51,9 +57,7 @@ export default function Page() {
             const response = await fetch(REGISTER_URL, requestOptions);
     
             interface RegisterResponse {
-                data?: {
-                    message?: string;
-                };
+                message?: string;
             }
             let data: RegisterResponse = {};
     
@@ -66,11 +70,24 @@ export default function Page() {
                 // TODO Add toast
                 console.log("Register success");
                 router.push(LOGIN_URL);
-            } else if (response.status == 400 || response.status == 422) {
+            } else if (response.status == 400) {
                 setRegisterError(true);
-                setRegisterMessage(data.data?.message?? "Podana nazwa użytkownika lub adres email są już używane.");
+                const errorResponse = data?.message;
+
+                if (errorResponse == "Username is already registered.") {
+                    setIsUsernameInvalid(true);
+                    setRegisterMessage("Podana nazwa użytkownika jest już używana.");
+                } else if (errorResponse == "Email is already registered.") {
+                    setIsEmailInvalid(true);
+                    setRegisterMessage("Podany adres email jest już używany.");
+                } else {
+                    setRegisterMessage("Podczas tworzenia konta wystąpił nieoczekiwany błąd. Spróbuj ponownie później.");
+                }
+                
                 // TODO Add toast
-                console.log("Register failed");
+                console.log("Account update failed");
+            } else if (response.status == 401) {
+                auth.loginRequired();
             } else {
                 setRegisterError(true);
                 setRegisterMessage("Podczas logowania wystąpił nieoczekiwany błąd servera. Spróbuj ponownie później.");
@@ -98,6 +115,8 @@ export default function Page() {
     }, [formData.confirmPassword]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsUsernameInvalid(false);
+        setIsEmailInvalid(false);
         setFormData({
             ...formData,
             [event.target.name]: event.target.value
@@ -110,11 +129,13 @@ export default function Page() {
             <Card className="sm:w-[32rem] w-full p-4">
                 <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
                     <h1 className="text-primary text-4xl font-semibold mb-2">Rejestracja</h1>
-                    <p className={`text-default-600 ${registerError? "text-danger-500": ""}`}>{registerMessage}</p>
+                    <p className={`${registerError? "text-danger-500": "text-default-600"}`}>{registerMessage}</p>
                 </CardHeader>
                 <CardBody className="overflow-visible flex flex-col gap-4 mt-2">
                 <Input
                     color="default"
+                    errorMessage="Nazwa użytkownika musi być unikalna!"
+                    isInvalid={isUsernameInvalid}
                     isRequired={true}
                     label="Nazwa"
                     labelPlacement="outside"
@@ -122,7 +143,7 @@ export default function Page() {
                     placeholder="Nazwa"
                     size="lg"
                     startContent={
-                        <UserRound className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                        <UserRound className={`text-2xl  pointer-events-none flex-shrink-0 ${isUsernameInvalid? "text-danger-400" :"text-default-400"}`}/>
                     }
                     type="text"
                     value={formData.username}
@@ -131,7 +152,7 @@ export default function Page() {
                 <Input
                     color="default"
                     errorMessage="Podany adres email jest niepoprawny!"
-                    isInvalid={isInvalidEmail}
+                    isInvalid={isInvalidEmail || isEmailInvalid}
                     isRequired={true}
                     label="Email"
                     labelPlacement="outside"
@@ -139,7 +160,7 @@ export default function Page() {
                     placeholder="Email"
                     size="lg"
                     startContent={
-                        <Mail className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidEmail? "text-danger-400" :"text-default-400"}`}/>
+                        <Mail className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidEmail || isEmailInvalid? "text-danger-400" :"text-default-400"}`}/>
                     }
                     type="email"
                     value={formData.email}
@@ -200,7 +221,7 @@ export default function Page() {
                 </CardBody>
                 <CardFooter className="flex flex-col">
                     <Button className="w-full" color="default" size="md" type="submit" variant="shadow">
-                        Zaloguj się
+                        Załóż konto
                     </Button> 
                     <div className="flex gap-2 mt-4">
                         <p>Lub jeśli masz już konto</p>

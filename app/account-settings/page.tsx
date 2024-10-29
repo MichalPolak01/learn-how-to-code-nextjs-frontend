@@ -141,7 +141,7 @@ export default function Page() {
                 <CardBody className="overflow-visible flex flex-col gap-4 mt-2">
                 <Input
                     color="default"
-                    errorMessage="Nazwa użytkownika musi być unikalne!"
+                    errorMessage="Nazwa użytkownika musi być unikalna!"
                     isInvalid={isUsernameInvalid}
                     isRequired={true}
                     label="Nazwa"

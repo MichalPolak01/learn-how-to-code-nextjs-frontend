@@ -54,7 +54,6 @@ export default function Page() {
             } catch (error) { }
 
             if (response.status == 200) {
-                console.log("AA", data.username);
                 auth.login(data.username, data.access, data.refresh);
                 setLoginError(false);
                 // TODO Add toast
@@ -86,11 +85,13 @@ export default function Page() {
             <Card className="sm:w-[32rem] w-full p-4">
                 <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
                     <h1 className="text-primary text-4xl font-semibold mb-2">Logowanie</h1>
-                    <p className={`text-default-600 ${loginError? "text-red-600": ""}`}>{loginMessage}</p>
+                    <p className={`${loginError? "text-danger-500": "text-default-600"}`}>{loginMessage}</p>
                 </CardHeader>
                 <CardBody className="overflow-visible flex flex-col gap-4 mt-2">
                 <Input
                     color="default"
+                    errorMessage="Sprawdź podany adres email!"
+                    isInvalid={loginError}
                     isRequired={true}
                     label="Email"
                     labelPlacement="outside"
@@ -98,7 +99,7 @@ export default function Page() {
                     placeholder="Email"
                     size="lg"
                     startContent={
-                        <Mail className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                        <Mail className={`text-2xl  pointer-events-none flex-shrink-0 ${loginError? "text-danger-400" : "text-default-400"}`}/>
                     }
                     type="email"
                     value={formData.email}
@@ -109,12 +110,14 @@ export default function Page() {
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibility}>
                         {isVisible ? (
-                            <EyeOff className="text-2xl text-default-400 pointer-events-none" />
+                            <EyeOff className={`text-2xl pointer-events-none ${loginError? "text-danger-400" :"text-default-400"}`} />
                         ) : (
-                            <Eye className="text-2xl text-default-400 pointer-events-none" />
+                            <Eye className={`text-2xl pointer-events-none ${loginError? "text-danger-400" :"text-default-400"}`} />
                         )}
                         </button>
                     }
+                    errorMessage="Sprawdź podane hasło!"
+                    isInvalid={loginError}
                     isRequired={true}
                     label="Hasło"
                     labelPlacement="outside"
@@ -122,7 +125,7 @@ export default function Page() {
                     placeholder="Hasło"
                     size="lg"
                     startContent={
-                        <LockKeyhole className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${loginError? "text-danger-400" :"text-default-400"}`}/>
                     }
                     type={isVisible ? "text" : "password"}
                     value={formData.password}
