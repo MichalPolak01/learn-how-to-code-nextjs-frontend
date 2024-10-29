@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, createContext, useContext } from "react"
 
-import { deleteTokens, getToken, setRefreshToken, setToken } from "@/lib/auth";
+import { getToken, setToken, setRefreshToken, deleteTokens } from "@/lib/authClient";
 
 interface AuthContextProps {
     isAuthenticated: boolean
@@ -113,10 +113,6 @@ export function AuthProvider({children}: AuthProviderProps) {
         </AuthContext.Provider>
     )
 }
-
-// export function useAuth() {
-//     return useContext(AuthContext);
-// }
 
 export function useAuth() {
     const context = useContext(AuthContext)

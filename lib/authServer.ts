@@ -11,7 +11,7 @@ const TOKEN_REFRESH_NAME = "auth-refresh-token";
 export async function getToken() {
     const myAuthToken = cookies().get(TOKEN_NAME)?.value;
 
-    if (myAuthToken && !isTokenExpired(myAuthToken)) {
+    if (myAuthToken) {
         return myAuthToken;
     }
 
@@ -40,7 +40,7 @@ export async function setRefreshToken(authRefreshToken: string | null | undefine
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV !== 'development',
-        maxAge: TOKEN_AGE
+        maxAge: TOKEN_AGE * 7
     });
 }
 

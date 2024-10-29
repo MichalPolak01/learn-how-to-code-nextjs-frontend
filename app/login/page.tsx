@@ -43,8 +43,8 @@ export default function Page() {
 
             interface LoginResponse {
                 username?: string,
-                accessToken?: string,
-                refreshToken?: string,
+                access?: string,
+                refresh?: string,
                 detail?: string
             };
             let data: LoginResponse = {};
@@ -54,7 +54,8 @@ export default function Page() {
             } catch (error) { }
 
             if (response.status == 200) {
-                auth.login(data.username, data.accessToken, data.refreshToken);
+                console.log("AA", data.username);
+                auth.login(data.username, data.access, data.refresh);
                 setLoginError(false);
                 // TODO Add toast
                 console.log("Login success");

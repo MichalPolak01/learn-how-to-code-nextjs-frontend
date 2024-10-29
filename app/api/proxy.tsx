@@ -1,4 +1,4 @@
-import { getToken } from "@/lib/auth";
+import { getToken } from "@/lib/authServer";
 
 interface ApiResponse<T> {
     data: T | null;
@@ -14,11 +14,11 @@ export default class ApiProxy {
             "Content-Type": "application/json",
             "Accept": "application/json",
         };
-
+        
         const authToken = await getToken();
 
         if (authToken && requireAuth) {
-            headers["Authorization"] = `Bearer ${authToken}`;
+            headers["Authorization"] = `Bearer ${authToken}`
         }
 
         return headers;
@@ -48,6 +48,30 @@ export default class ApiProxy {
 
         const requestOptions: RequestInit = {
             method: "POST",
+            headers,
+            body: jsonData,
+        };
+
+        return ApiProxy.handleFetch<T>(endpoint, requestOptions);
+    }
+
+    static async get(endpoint: string, requireAuth: boolean) {
+        const headers = await ApiProxy.getHeaders(requireAuth);
+
+        const requestOptions = {
+            method: "GET",
+            headers: headers
+        };
+
+        return await ApiProxy.handleFetch(endpoint, requestOptions);
+    }
+
+    static async patch<T>(endpoint: string, object: Record<string, any>, requireAuth: boolean): Promise<ApiResponse<T>> {
+        const jsonData = JSON.stringify(object);
+        const headers = await ApiProxy.getHeaders(requireAuth);
+
+        const requestOptions: RequestInit = {
+            method: "PATCH",
             headers,
             body: jsonData,
         };

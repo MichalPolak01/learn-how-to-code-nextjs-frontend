@@ -5,7 +5,7 @@ import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Input } from "@nextui-org/input";
 import { Link } from "@nextui-org/link";
-import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { validateEmail, validatePassword } from "@/lib/formValidators";
@@ -122,7 +122,7 @@ export default function Page() {
                     placeholder="Nazwa"
                     size="lg"
                     startContent={
-                        <Mail className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                        <UserRound className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
                     }
                     type="text"
                     value={formData.username}
@@ -191,7 +191,7 @@ export default function Page() {
                     placeholder="Potwierdź hasło"
                     size="lg"
                     startContent={
-                        <LockKeyhole className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`}/>
                     }
                     type={isConfirmPasswordVisible ? "text" : "password"}
                     value={formData.confirmPassword}
