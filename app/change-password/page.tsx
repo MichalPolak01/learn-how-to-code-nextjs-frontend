@@ -4,15 +4,12 @@ import React, { FormEvent, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Input } from "@nextui-org/input";
-import { Link } from "@nextui-org/link";
-import { Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Eye, EyeOff, LockKeyhole } from "lucide-react";
 
-import { validateEmail, validatePassword } from "@/lib/formValidators";
-import { useAuth } from "@/providers/authProvider";
+import { validatePassword } from "@/lib/formValidators";
 
 
-const REGISTER_URL = "api/change-password"
+const CHANGE_PASSWORD_URL = "api/change-password"
 
 export default function Page() {
     const [isOldPasswordVisible, setIsOldPasswordVisible] = React.useState(false);
@@ -53,7 +50,7 @@ export default function Page() {
                 body: JSON.stringify(formData)
             };
     
-            const response = await fetch(REGISTER_URL, requestOptions);
+            const response = await fetch(CHANGE_PASSWORD_URL, requestOptions);
     
             interface RegisterResponse {
                 message?: string;
@@ -66,6 +63,7 @@ export default function Page() {
     
             if (response.status == 200) {
                 setPasswordChangeError(2);
+                setPasswordChangeMessage("Hasło zostało zmienione.");
                 // TODO Add toast
                 console.log("Password change success");
             } else if (response.status == 400) {
@@ -120,7 +118,7 @@ export default function Page() {
                 <Card className="sm:w-[32rem] w-full p-4">
                     <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
                         <h1 className="text-primary text-4xl font-semibold mb-2">Zmiana hasła</h1>
-                        <p className={`${passwordChangeError? "text-danger-500": "text-default-600"}`}>{passwordChangeMessage}</p>
+                        <p className={`${passwordChangeError == 1 ? "text-danger-500": passwordChangeError == 2 ? "text-success-500" : "text-default-600"}`}>{passwordChangeMessage}</p>
                     </CardHeader>
                     <CardBody className="overflow-visible flex flex-col gap-4 mt-2">
                     <Input
@@ -134,7 +132,7 @@ export default function Page() {
                             )}
                             </button>
                         }
-                        errorMessage="Hasło musi posiadać co najmniej 8 znaków, w tym 1 małą literę, 1 dużą literę, cyfrę oraz znak specjalny."
+                        errorMessage="Podane hasło jest niepoprawne."
                         isInvalid={isOldPasswordInvalid}
                         isRequired={true}
                         label="Obecne Hasło"
@@ -161,7 +159,7 @@ export default function Page() {
                             </button>
                         }
                         errorMessage="Hasło musi posiadać co najmniej 8 znaków, w tym 1 małą literę, 1 dużą literę, cyfrę oraz znak specjalny."
-                        isInvalid={isInvalidPassword || isOldPasswordInvalid}
+                        isInvalid={isInvalidPassword || isNewPasswordsInvalid}
                         isRequired={true}
                         label="Nowe Hasło"
                         labelPlacement="outside"
@@ -169,7 +167,7 @@ export default function Page() {
                         placeholder="Nowe hasło"
                         size="lg"
                         startContent={
-                            <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidPassword || isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`}/>
+                            <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidPassword || isNewPasswordsInvalid ? "text-danger-400" :"text-default-400"}`}/>
                         }
                         type={isNewPasswordVisible ? "text" : "password"}
                         value={formData.new_password}
@@ -180,22 +178,22 @@ export default function Page() {
                         endContent={
                             <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibilityConfirmPassword}>
                             {isConfirmPasswordVisible ? (
-                                <EyeOff className={`text-2xl pointer-events-none ${isInvalidConfirmPassword || isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`} />
+                                <EyeOff className={`text-2xl pointer-events-none ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`} />
                             ) : (
-                                <Eye className={`text-2xl pointer-events-none ${isInvalidConfirmPassword || isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`} />
+                                <Eye className={`text-2xl pointer-events-none ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`} />
                             )}
                             </button>
                         }
                         errorMessage="Hasła nie mogą się od siebie różnić!"
-                        isInvalid={isInvalidConfirmPassword || isOldPasswordInvalid}
+                        isInvalid={isInvalidConfirmPassword}
                         isRequired={true}
-                        label="Potwierdź Hasło"
+                        label="Potwierdź Nowe Hasło"
                         labelPlacement="outside"
                         name="confirm_password"
-                        placeholder="Potwierdź hasło"
+                        placeholder="Potwierdź nowe hasło"
                         size="lg"
                         startContent={
-                            <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidConfirmPassword || isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`}/>
+                            <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`}/>
                         }
                         type={isConfirmPasswordVisible ? "text" : "password"}
                         value={formData.confirm_password}
