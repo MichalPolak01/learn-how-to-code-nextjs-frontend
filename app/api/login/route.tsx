@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 
 import ApiProxy from "../proxy";
 
-import { setRefreshToken, setToken } from "@/lib/authServer";
+import { setRefreshToken, setRole, setToken } from "@/lib/authServer";
 
 
 const DJANGO_API_LOGIN_URL = "http://127.0.0.1:8000/api/login"
@@ -12,6 +12,7 @@ const DJANGO_API_LOGIN_URL = "http://127.0.0.1:8000/api/login"
 interface LoginResponse {
     access: string;
     refresh: string;
+    role: string;
 }
 
 export async function POST(request: Request) {
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
 
         setToken(loginData.access);
         setRefreshToken(loginData.refresh);
+        setRole(loginData.role);
     }
 
     return NextResponse.json(data, {status: status});

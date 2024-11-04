@@ -10,7 +10,7 @@ interface AuthContextProps {
     authToken: string | null
     // loading: boolean
     username: string
-    login: (username?: string, authToken?: string, refreshToken?: string) => void
+    login: (username?: string, role?: string, authToken?: string, refreshToken?: string) => void
     logout: () => void
     loginRequired: () => void
 }
@@ -24,6 +24,7 @@ const LOGIN_REQUIRED_URL = "/login"
 
 const LOCAL_STORAGE_KEY = "is-logged-in"
 const LOCAL_USERNAME_KEY = "username"
+const LOCAL_ROLE_KEY = "role"
 
 
 interface AuthProviderProps {
@@ -34,6 +35,7 @@ interface AuthProviderProps {
 export function AuthProvider({children}: AuthProviderProps) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState("");
+    const [role, setRole] = useState("");
     const [authToken, setAuthToken] = useState<string | null>(null)
 
     const router = useRouter();
@@ -62,7 +64,7 @@ export function AuthProvider({children}: AuthProviderProps) {
         checkToken();
     }, []);
 
-    const login = async(username?: string, authToken?: string, refreshToken?: string) => {
+    const login = async(username?: string, role?: string, authToken?: string, refreshToken?: string) => {
         if (authToken) {
             setToken(authToken);
             setAuthToken(authToken);
@@ -73,11 +75,19 @@ export function AuthProvider({children}: AuthProviderProps) {
         }
 
         if (username) {
-            localStorage.setItem(LOCAL_STORAGE_KEY, username);
+            localStorage.setItem(LOCAL_USERNAME_KEY, username);
             setUsername(username);
         } else {
             localStorage.removeItem(LOCAL_USERNAME_KEY);
             setUsername("");
+        }
+
+        if(role) {
+            localStorage.setItem(LOCAL_ROLE_KEY, role);
+            setRole(role);
+        } else {
+            localStorage.removeItem(LOCAL_ROLE_KEY);
+            setRole("");
         }
 
         const nextUrl = searchParams.get("next");

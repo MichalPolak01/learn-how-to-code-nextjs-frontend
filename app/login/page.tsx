@@ -45,7 +45,8 @@ export default function Page() {
                 username?: string,
                 access?: string,
                 refresh?: string,
-                detail?: string
+                detail?: string,
+                role?: string
             };
             let data: LoginResponse = {};
 
@@ -54,7 +55,7 @@ export default function Page() {
             } catch (error) { }
 
             if (response.status == 200) {
-                auth.login(data.username, data.access, data.refresh);
+                auth.login(data.username, data.role, data.access, data.refresh);
                 setLoginError(false);
                 // TODO Add toast
                 console.log("Login success");

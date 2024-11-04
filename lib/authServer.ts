@@ -1,25 +1,23 @@
 "use server"
 
-import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 
 const TOKEN_AGE = 3600;
 const TOKEN_NAME = "auth-token";
 const TOKEN_REFRESH_NAME = "auth-refresh-token";
+const ROLE_NAME = "role";
 
 
-export async function getToken() {
-    const myAuthToken = cookies().get(TOKEN_NAME)?.value;
-
-    if (myAuthToken) {
-        return myAuthToken;
-    }
-
-    return null;
+export function getToken() {
+    return cookies().get(TOKEN_NAME)?.value || null;
 }
 
-export async function getRefreshToken() {
-    return cookies().get(TOKEN_REFRESH_NAME)?.value;
+export function getRefreshToken() {
+    return cookies().get(TOKEN_REFRESH_NAME)?.value || null;
+}
+
+export function getRole() {
+    return cookies().get(ROLE_NAME)?.value || null;
 }
 
 export async function setToken(authToken: string | null | undefined) {
@@ -44,13 +42,19 @@ export async function setRefreshToken(authRefreshToken: string | null | undefine
     });
 }
 
+export async function setRole(role: string | null | undefined) {
+    return cookies().set({
+        name: ROLE_NAME,
+        value: role ?? "",
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV !== 'development',
+        maxAge: TOKEN_AGE
+    });
+}
+
 export async function deleteTokens() {
     cookies().delete(TOKEN_NAME);
     cookies().delete(TOKEN_REFRESH_NAME);
-}
-
-export async function isTokenExpired(token: string) {
-    const decoded = jwtDecode(token);
-
-    return decoded.exp? decoded.exp < Date.now() /1000 : false;
+    cookies().delete(ROLE_NAME);
 }
