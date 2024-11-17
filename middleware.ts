@@ -8,6 +8,7 @@ const protectedRoutes = {
     "/": ['USER', 'TEACHER'],
     "/account-settings": ['USER', 'TEACHER'],
     "/change-password": ['USER', 'TEACHER'],
+    "/home": ['USER', 'TEACHER'],
 };
 
 const publicRoutes = ['/login', '/register'];

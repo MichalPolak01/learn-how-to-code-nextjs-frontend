@@ -2,21 +2,21 @@
 
 import { cookies } from "next/headers";
 
-const TOKEN_AGE = 3600;
+const TOKEN_AGE = 3600 * 24;
 const TOKEN_NAME = "auth-token";
 const TOKEN_REFRESH_NAME = "auth-refresh-token";
 const ROLE_NAME = "role";
 
 
-export function getToken() {
+export async function getToken() {
     return cookies().get(TOKEN_NAME)?.value || null;
 }
 
-export function getRefreshToken() {
+export async function getRefreshToken() {
     return cookies().get(TOKEN_REFRESH_NAME)?.value || null;
 }
 
-export function getRole() {
+export async function getRole() {
     return cookies().get(ROLE_NAME)?.value || null;
 }
 

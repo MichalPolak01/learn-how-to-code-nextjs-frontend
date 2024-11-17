@@ -3,26 +3,26 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, createContext, useContext } from "react"
 
-import { getToken, setToken, setRefreshToken, deleteTokens } from "@/lib/authClient";
+import { setToken, setRefreshToken, deleteTokens, isTokenExpired } from "@/lib/authClient";
+import { deleteTokens as deleteServerTokens } from "@/lib/authServer";
 
 interface AuthContextProps {
     isAuthenticated: boolean
     authToken: string | null
-    // loading: boolean
     username: string
+    role: string
     login: (username?: string, role?: string, authToken?: string, refreshToken?: string) => void
     logout: () => void
     loginRequired: () => void
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null)
-// const AuthContext = createContext(null);
 
-const LOGIN_REDIRECT_URL = "/"
+const LOGIN_REDIRECT_URL = "/home"
 const LOGOUT_REDIRECT_URL = "/login"
 const LOGIN_REQUIRED_URL = "/login"
 
-const LOCAL_STORAGE_KEY = "is-logged-in"
+const LOCAL_TOKEN_KEY = "auth-token"
 const LOCAL_USERNAME_KEY = "username"
 const LOCAL_ROLE_KEY = "role"
 
@@ -43,22 +43,36 @@ export function AuthProvider({children}: AuthProviderProps) {
     const searchParams = useSearchParams();
 
     useEffect(() => {
+        
         const checkToken = async () => {
-            const token = await getToken();
+            const token = localStorage.getItem(LOCAL_TOKEN_KEY);
 
             if (token) {
+                if (isTokenExpired(token)) {
+                    loginRequired();
+                    
+                    return;
+                }
+
                 setIsAuthenticated(true);
                 setAuthToken(token);
             } else {
-                setIsAuthenticated(false);
-                setAuthToken(null);
+                loginRequired();
+                    
+                return;
             }
 
             const storedUsername = localStorage.getItem(LOCAL_USERNAME_KEY);
 
             if (storedUsername) {
                 setUsername(storedUsername);
-            }            
+            }
+            
+            const storedRole = localStorage.getItem(LOCAL_ROLE_KEY);
+
+            if (storedRole) {
+                setRole(storedRole);
+            }    
         }
 
         checkToken();
@@ -104,21 +118,26 @@ export function AuthProvider({children}: AuthProviderProps) {
     const logout = () => {
         setIsAuthenticated(false);
         deleteTokens();
-        localStorage.setItem(LOCAL_STORAGE_KEY, "0");
+        deleteServerTokens();
+        localStorage.removeItem(LOCAL_USERNAME_KEY);
+        localStorage.removeItem(LOCAL_ROLE_KEY);
+        
         router.replace(LOGOUT_REDIRECT_URL);
     }
 
     const loginRequired = () => {
         setIsAuthenticated(false);
         deleteTokens();
-        localStorage.setItem(LOCAL_STORAGE_KEY, "0");
+        deleteServerTokens();
+        localStorage.removeItem(LOCAL_USERNAME_KEY);
+        localStorage.removeItem(LOCAL_ROLE_KEY);
         const loginWithNextUrl = `${LOGIN_REQUIRED_URL}?next=${pathname}`;
 
         router.replace(loginWithNextUrl);
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, authToken, login, logout, loginRequired, username }}>
+        <AuthContext.Provider value={{ isAuthenticated, authToken, login, logout, loginRequired, username, role }}>
             {children}
         </AuthContext.Provider>
     )
