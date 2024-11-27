@@ -78,4 +78,17 @@ export default class ApiProxy {
 
         return ApiProxy.handleFetch<T>(endpoint, requestOptions);
     }
+
+    static async put<T>(endpoint: string, object: Record<string, any>, requireAuth: boolean): Promise<ApiResponse<T>> {
+        const jsonData = JSON.stringify(object);
+        const headers = await ApiProxy.getHeaders(requireAuth);
+
+        const requestOptions: RequestInit = {
+            method: "PUT",
+            headers,
+            body: jsonData,
+        };
+
+        return ApiProxy.handleFetch<T>(endpoint, requestOptions);
+    }
 }

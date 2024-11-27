@@ -33,7 +33,7 @@ export const siteConfig = {
     },
     {
       label: "Stwórz kurs",
-      href: "teacher/courses/wizard",
+      href: "teacher/course/wizard",
       authRequired: true
     },
   ],
