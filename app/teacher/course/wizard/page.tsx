@@ -3,77 +3,25 @@
 import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { Input, Textarea } from "@nextui-org/input";
-import { Switch } from "@nextui-org/switch";
-import { CheckCircle, ChevronDown, ChevronLeft, ChevronRight, Trash2, XCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Reorder } from "motion/react"
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Chip } from "@nextui-org/chip";
 import { Tooltip } from "@nextui-org/tooltip";
-import ReactQuill from "react-quill";
+import { Spinner } from "@nextui-org/spinner";
 
 import { createCoursePath } from "@/config/data";
 import { useAuth } from "@/providers/authProvider";
 import "react-quill/dist/quill.snow.css";
+import ModuleAccordionItem from "@/components/course_wizard/moduleAccordionItem";
+import { validateCourseBeforePublication, validateCourseDetails, validateModules, validateModulesAndLessons } from "@/lib/formValidators";
+import ErrorAlert from "@/components/errorAlert";
+import { showToast } from "@/lib/showToast";
+import RowSteps from "@/components/course_wizard/rowSteps";
+
 
 const CREATE_COURSE_URL = "/api/teacher/course";
-
-
-interface Option {
-  id: string;
-  answer: string;
-  is_correct: boolean;
-}
-
-interface Question {
-  id: string;
-  question: string;
-  answers: Option[];
-}
-
-interface Quiz {
-  id: string;
-  questions: Question[];
-}
-
-interface Description {
-  id: string;
-  description: string;
-}
-
-interface Assignment {
-  id: string;
-  instructions: string;
-}
-
-interface Lesson {
-  id: string;
-  topic: string;
-  order: number;
-  introduction: Description;
-  quiz: Question[];
-  assignment: Assignment;
-}
-
-interface Module {
-  id: string;
-  name: string;
-  order: number;
-  is_visible: boolean;
-  lessons: Lesson[];
-}
-
-interface Course {
-  id: string;
-  creator_state: string;
-  name: string;
-  description: string;
-  is_public: boolean;
-  modules: Module[];
-}
-
-
 
 interface CoursePageProps {
   courseId?: number | null;
@@ -96,6 +44,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
 
   const auth = useAuth();
   const router = useRouter();
@@ -139,7 +89,6 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
   };
 
 
-
   const prepareCourseForApi = (course: Course): any => {
     const nextState = handleNextState();
 
@@ -180,62 +129,11 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     };
   };
 
-  const validateCourseBeforePublish = (course: Course): boolean => {
-    if (course.modules.length < 2) {
-      console.error("Kurs musi zawierać co najmniej 2 moduły.");
-
-      return false;
-    }
-
-    for (const module of course.modules) {
-      if (module.lessons.length < 2) {
-        console.error(`Moduł "${module.name}" musi zawierać co najmniej 2 lekcje.`);
-
-        return false;
-      }
-
-      for (const lesson of module.lessons) {
-        if (!lesson.introduction.description.trim()) {
-          console.error(`Lekcja "${lesson.topic}" musi mieć uzupełnione wprowadzenie.`);
-
-          return false;
-        }
-
-        if (!lesson.assignment.instructions.trim()) {
-          console.error(`Lekcja "${lesson.topic}" musi mieć uzupełnione zadanie.`);
-
-          return false;
-        }
-
-        if (lesson.quiz.length < 3) {
-          console.error(`Lekcja "${lesson.topic}" musi mieć co najmniej 3 pytania w quizie.`);
-
-          return false;
-        }
-
-        for (const question of lesson.quiz) {
-          if (question.answers.length < 3) {
-            console.error(
-              `Pytanie "${question.question}" w lekcji "${lesson.topic}" musi mieć co najmniej 3 odpowiedzi.`
-            );
-
-            return false;
-          }
-        }
-      }
-    }
-
-    console.log("Kurs przeszedł walidację.");
-
-    return true;
-  };
-
 
   useEffect(() => {
     const loadCourse = async () => {
       if (!courseId) return;
 
-      setLoading(true);
       try {
         const response = await fetch(`/api/teacher/course/${courseId}`, {
           method: "GET",
@@ -251,23 +149,34 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         }
 
         if (!response.ok) {
-          console.error("Nie udało się znaleźć kursu.");
+          showToast("Nie udało się znaleźć kursu.", true);
+          router.push("/teacher/course/wizard");
 
           return;
         }
 
         const data = await response.json();
 
+        while (!auth.username) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        if (data.author.username !== auth.username) {
+          showToast("Ten kurs nie należy do Ciebie.", true);
+          router.push("/teacher/course/wizard");
+
+          return;
+        }
+
         const formatted = formattedCourse(data);
 
         setCourseData(formatted);
 
-        console.log("Dane zwrócone z API:", data);
-        console.log("Przetworzony kurs:", formatted);
       } catch (error) {
-        console.error("Nie udało się wczytać kursu.", error);
-      } finally {
-        setLoading(false);
+        showToast("Nie udało się wczytać kursu.", true);
+        router.push("/teacher/course/wizard");
+
+        return;
       }
     };
 
@@ -287,25 +196,30 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     return nextItem ? nextItem.value : courseData.creator_state;
   };
 
-  const validateCourseDetails = () => {
-    const nameError = courseData.name === "";
-    const descriptionError = courseData.description === "";
-
-    setCourseDataError((prevErrors) => ({
-      ...prevErrors,
-      name: nameError,
-      description: descriptionError,
-    }));
-
-    return !nameError && !descriptionError;
-  };
 
   const handleCreateCourse = async (e: React.FormEvent, generate: boolean) => {
     e.preventDefault();
 
-    validateCourseDetails();
+    const validationResponse = validateCourseDetails(courseData);
+
+    if (validationResponse != "Walidacja powiodła się." ) {
+      setValidationMessage(validationResponse);
+      setIsErrorOpen(true);
+
+      const nameError = courseData.name === "";
+      const descriptionError = courseData.description === "";
+
+      setCourseDataError((prevErrors) => ({
+        ...prevErrors,
+        name: nameError,
+        description: descriptionError,
+      }));
+
+      return;
+    }
 
     try {
+      setLoading(true);
       const nextState = handleNextState();
       const url = new URL(window.location.origin + CREATE_COURSE_URL);
 
@@ -324,7 +238,23 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       });
 
       if (response.status === 400) {
-        console.error("Course with this name already exists!")
+        interface ResponseMessage {
+          message?: string
+        };
+        let data: ResponseMessage = {};
+
+        try {
+            data = await response.json();
+        } catch { }
+
+        if (data.message === "A course with this name already exists.") {
+          showToast("Kurs z podaną nazwą już istnieje.", true);
+        } else if (data.message === "Only teachers can create courses.") {
+          showToast("Nie jesteś nauczycielem, a tylko nauczyciele mogą tworzyć kursy.", true);
+          router.push("/");
+        }
+
+        return;
       }
       if (response.status === 401) {
         auth.loginRequired();
@@ -345,12 +275,13 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       const formatted = formattedCourse(data);
 
       setCourseData(formatted);
-
-      console.log("Kurs został pomyślnie utworzony:", formatted);
+      showToast(`Utworzono nowy kurs`, false);
 
       router.push(`/teacher/course/wizard/${data.id}`);
     } catch (error) {
-      console.error("Nie udało się stworzyć kursu.", error);
+      showToast(`Nie udało się stworzyć kursu. ${error}`, true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -358,7 +289,12 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     const nextState = handleNextState();
 
     if (publish) {
-      if (!validateCourseBeforePublish(courseData)) {
+      const validationResponse = validateCourseBeforePublication(courseData);
+
+      if (validationResponse != "Walidacja powiodła się." ) {
+        setValidationMessage(validationResponse);
+        setIsErrorOpen(true);
+
         return;
       } else {
         courseData.is_public = !courseData.is_public;
@@ -366,6 +302,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     }
 
     try {
+      setLoading(true);
       const response = await fetch(`${CREATE_COURSE_URL}/${courseId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -386,29 +323,28 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       const formatted = formattedCourse(data);
 
       setCourseData(formatted);
-
-      console.log("Kurs został zaktualizowany utworzony:", formatted);
-
+      showToast(`Kurs został zaktualizowany.`, false);
     } catch (error) {
-      console.error("Nie udało się stworzyć kursu.", error);
+      showToast(`Nie udało się zaktualizować kursu. ${error}`, true);
+    } finally {
+      setLoading(false);
     }
   }
-
-  const validateModules = () => {
-    return courseData.modules.length > 0 && courseData.modules.every((module) => module.name.trim() !== "");
-  };
 
   const handleCreateModules = async (e: React.FormEvent, generate: boolean) => {
     e.preventDefault();
 
-    if (!validateModules()) {
-      console.error("Moduły nie są poprawne. Upewnij się, że wszystkie moduły mają nazwy.");
+    const validationResponse = validateModules(courseData);
+
+    if (validationResponse != "Walidacja powiodła się." ) {
+      setValidationMessage(validationResponse);
+      setIsErrorOpen(true);
 
       return;
     }
 
     try {
-      console.log("Moduły do zapisania:", courseData.modules);
+      setLoading(true);
       const url = new URL(`${window.location.origin}/api/teacher/course/${courseId}/module`);
 
       if (generate) {
@@ -434,13 +370,14 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       }
 
       if (response.status === 404) {
-        console.error("Nie znaleziono kursu.");
+        showToast(`Nie znaleziono kursu o id ${courseId}.`, true);
+        router.push("/not-found");
 
         return;
       }
 
       if (response.status === 400 || response.status === 422) {
-        console.error("Nieprawidłowe dane.");
+        showToast("Podane dane są w nieodpowiednim formacie.", true);
 
         return;
       }
@@ -450,40 +387,36 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       }
 
       if (response.status === 201) {
-        const data = await response.json();
-
         handleUpdateCourseDetails(courseId, false);
 
-        console.log("Moduły zapisane pomyślnie:", data);
+        showToast(`Moduły zapisane pomyślnie.`, false);
       }
     } catch (error) {
-      console.error("Nie udało się stworzyć modułów.", error);
+      showToast(`Nie udało się stworzyć modułów. ${error}`, true);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const validateModulesAndLessons = () => {
-    return courseData.modules.every((module) => {
-      const validLessons = module.lessons.length >= 2 &&
-        module.lessons.every((lesson) => lesson.topic.trim() !== "");
-
-      return validLessons;
-    });
-  };
-
 
   const handleCreateLessons = async (e: React.FormEvent, generate: boolean) => {
     e.preventDefault();
 
-    if (!validateModulesAndLessons()) {
-      console.error("Nie wszystkie moduły mają co najmniej 2 lekcje z podanymi nazwami.");
+    const validationResponse = validateModulesAndLessons(courseData);
+
+    if (validationResponse != "Walidacja powiodła się." ) {
+      setValidationMessage(validationResponse);
+      setIsErrorOpen(true);
 
       return;
     }
 
     try {
+      setLoading(true);
       for (const module of courseData.modules) {
         if (module.lessons.length === 0) {
-          console.error(`Moduł ${module.name} nie zawiera lekcji.`);
+          setValidationMessage(`Moduł ${module.name} nie zawiera lekcji.`);
+          setIsErrorOpen(true);
+
           continue;
         }
 
@@ -513,14 +446,15 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         }
 
         if (response.status === 404) {
-          console.error(`Nie znaleziono modułu o ID ${module.id}.`);
-
+          showToast(`Nie znaleziono kursu o id ${courseId}.`, true);
+          router.push("/not-found");
+  
           return;
         }
-
+  
         if (response.status === 400 || response.status === 422) {
-          console.error(`Nieprawidłowe dane dla modułu ${module.name}.`);
-
+          showToast("Podane dane są w nieodpowiednim formacie.", true);
+  
           return;
         }
 
@@ -529,14 +463,14 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         }
 
         if (response.status === 201) {
-          const data = await response.json();
-          console.log(`Lekcje dla modułu ${module.name} zapisane pomyślnie:`, data);
-
+          showToast(`Lekcje zapisane pomyślnie.`, false);
           handleUpdateCourseDetails(courseId, false);
         }
       }
     } catch (error) {
-      console.error("Nie udało się stworzyć lekcji.", error);
+      showToast(`Nie udało się stworzyć lekcji. ${error}`, true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -544,11 +478,37 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
   const handleUpdateCourse = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = prepareCourseForApi(courseData);
+    const validationResponse = validateCourseDetails(courseData);
 
-    console.log("Data wysyłane do API: ", payload);
+    if (validationResponse != "Walidacja powiodła się." ) {
+      setValidationMessage(validationResponse);
+      setIsErrorOpen(true);
+
+      const nameError = courseData.name === "";
+      const descriptionError = courseData.description === "";
+
+      setCourseDataError((prevErrors) => ({
+        ...prevErrors,
+        name: nameError,
+        description: descriptionError,
+      }));
+
+      return;
+    }
+
+    if (courseData.is_public) {
+      const validationResponse = validateCourseBeforePublication(courseData);
+
+      if (validationResponse != "Walidacja powiodła się." ) {
+
+        courseData.is_public = !courseData.is_public;
+      }
+    }
+
+    const payload = await prepareCourseForApi(courseData);
 
     try {
+      setLoading(true);
       const url = `${window.location.origin}/api/teacher/course/${courseData.id}`;
       const response = await fetch(url, {
         method: "PUT",
@@ -565,7 +525,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       }
 
       if (response.status === 404) {
-        console.error(`Nie znaleziono kursu o ID ${courseData.id}.`);
+        showToast(`Nie znaleziono kursu o id ${courseData.id}.`, true);
+        router.push("/not-found");
 
         return;
       }
@@ -580,10 +541,13 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         const data = await response.json();
 
         setCourseData(data);
+        showToast(`Kurs został zaktualizowany.`, false);
       }
 
     } catch (error) {
-      console.error("Nie udało się zaktualizować kursu:", error);
+      showToast(`Nie udało się zaktualizować kursu. ${error}`, true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -649,536 +613,158 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
 
   return (
-    <div className="flex flex-col gap-8 mt-10">
-      <Card className="p-8">
-        <h1 className="text-3xl text-primary font-semibold">Kreator kursu</h1>
-        <div className="flex flex-row mt-8">
-          {createCoursePath.map((item, index) => (
-            <div key={item.value} className="flex flex-row justify-center items-center gap-1">
-              <p className={`text-center ${courseData.creator_state === item.value && "text-secondary font-semibold"}`}>{index + 1}. {item.label}</p>
-              <ChevronRight />
-            </div>
-          ))}
+    <div className="relative">
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pb-40 bg-black/70 backdrop-blur-sm">
+          <Spinner color="primary" label="Ładowanie danych ..." labelColor="primary" size="lg" />
         </div>
-      </Card>
-
-      <Card className="p-8 flex flex-col gap-12">
-        <div className="flex flex-row justify-between">
-          <h2 className="text-3xl text-primary font-semibold">Podstawowe informacje o kursie</h2>
-          <div className="flex flex-col gap-2">
-            <Tooltip
-              content="Kurs można opublikować w ostatnim kroku kreatora."
-              isDisabled={courseData.creator_state === "edit"}
-              placement="bottom"
-            >
-              <Chip
-                color={courseData.is_public ? "success" : "danger"}
-                size="lg"
-                startContent={courseData.is_public ? <CheckCircle /> : <XCircle />}
-              >
-                {!courseData.is_public ? "Wersja robocza" : "Kurs publiczny"}
-              </Chip>
-            </Tooltip>
-            {courseData.creator_state === "edit" &&
-              <Button color="primary" variant="shadow" onClick={(e) => handleUpdateCourseDetails(courseId, true)}>
-                {courseData.is_public ? "Wersja robocza" : "Opublikuj kurs"}
-              </Button>
-            }
-          </div>
-        </div>
-
-        <form className="overflow-visible flex flex-col gap-5">
-          <Input
-            color={courseDataError.name ? "danger" : "default"}
-            errorMessage="Podanie tematu kursu jest wymagane!"
-            isInvalid={courseDataError.name}
-            isRequired={true}
-            label="Temat kursu"
-            labelPlacement="outside"
-            name="name"
-            placeholder="Podaj temat kursu"
-            value={courseData.name}
-            onChange={handleCourseChange}
-          />
-          <Textarea
-            color={courseDataError.description ? "danger" : "default"}
-            errorMessage="Podanie opisu kursu jest wymagane!"
-            isInvalid={courseDataError.description}
-            isRequired={true}
-            label="Opis kursu"
-            labelPlacement="outside"
-            name="description"
-            placeholder="Przedstaw swój kurs, aby zachęcić osby do udziału w nim."
-            value={courseData.description}
-            onChange={handleCourseChange}
-          />
-
-          {courseData.creator_state === "details" &&
-            <div className="flex flex-row gap-4 mt-4">
-              <Button color="primary" variant="ghost" onClick={(e) => handleCreateCourse(e, false)}>
-                Zapisz i kontynuuj własnoręczne tworzenie kursu
-              </Button>
-              <Button color="secondary" variant="ghost" onClick={(e) => handleCreateCourse(e, true)}>
-                Zapisz i wygeneruj moduły kursu
-              </Button>
-            </div>
-          }
-        </form>
-      </Card>
-
-      {(courseData.creator_state != "details") && (
-        <Card className="p-8 flex flex-col gap-4">
-          <h2 className="text-3xl text-primary font-semibold mb-4">Zawartość kursu</h2>
-          <h3 className="text-xl text-primary-600 font-semibold">Moduły</h3>
-          <Reorder.Group
-            axis="y"
-            className="flex flex-col gap-5"
-            values={courseData.modules}
-            onReorder={handleReorder}
-          >
-            {courseData.modules.map((module) => (
-              <CustomAccordionItem
-                key={module.id}
-                creator_state={courseData.creator_state}
-                module={module}
-                onRemove={() => handleRemoveModule(module.id)}
-                onUpdateLessons={(updatedLessons) =>
-                  handleUpdateModuleLessons(module.id, updatedLessons)
-                }
-                onUpdateName={(newName) => handleUpdateModuleName(module.id, newName)}
-              />
-            ))}
-          </Reorder.Group>
-          {(courseData.creator_state === "module-topics" || courseData.creator_state === "edit") &&
-            <Button
-              className="bg-default-200 border border-dashed border-default-600 rounded-xl p-4 text-center hover:text-black hover:border-black cursor-pointer"
-              onClick={handleAddModule}
-            >
-              Dodaj nowy moduł
-            </Button>
-          }
-          {courseData.creator_state === "module-topics" && (
-            <div className="flex flex-row gap-4 mt-4">
-              <Button color="primary" variant="ghost" onClick={(e) => handleCreateModules(e, false)}>
-                Zapisz moduły i kontynuuj własnoręczne tworzenie kursu
-              </Button>
-              <Button color="secondary" variant="ghost" onClick={(e) => handleCreateModules(e, true)}>
-                Zapisz moduły i wygeneruj tematy lekcji
-              </Button>
-            </div>
-          )}
-          {courseData.creator_state === "lesson-topics" && (
-            <div className="flex flex-row gap-4 mt-4">
-              <Button color="primary" variant="ghost" onClick={(e) => handleCreateLessons(e, false)}>
-                Zapisz tematy lekcji i kontynuuj własnoręczne tworzenie kursu
-              </Button>
-              <Button color="secondary" variant="ghost" onClick={(e) => handleCreateLessons(e, true)}>
-                Zapisz tematy lekcji i wygeneruj zawartość lekcji
-              </Button>
-            </div>
-          )}
-          {(courseData.creator_state === "lesson-content" || courseData.creator_state === "edit") && (
-            <div className="flex flex-row gap-4 mt-4">
-              <Button color="primary" variant="ghost" onClick={(e) => handleUpdateCourse(e)}>
-                Zapisz zawartość lekcji
-              </Button>
-            </div>
-          )}
-        </Card>
       )}
-    </div>
-  );
-};
+      <div className="flex flex-col gap-8 mt-10">
+        <Card className="p-8">
+          <h1 className="text-3xl text-primary font-semibold">Kreator kursu</h1>
+          <div className="flex flex-row mt-8 lg:justify-center items-center flex-wrap">
+              <RowSteps
+                currentStep={createCoursePath.findIndex(
+                  (step) => step.value === courseData.creator_state
+                ) + 1}
+                steps={createCoursePath.map((item, index) => ({
+                  title: `${index + 1}. ${item.label}`,
+                }))}
+              />
+          </div>
+        </Card>
 
-const CustomAccordionItem = ({
-  module,
-  creator_state,
-  onUpdateName,
-  onRemove,
-  onUpdateLessons,
-}: {
-  module: Module;
-  creator_state: string;
-  onUpdateName: (newName: string) => void;
-  onRemove: () => void;
-  onUpdateLessons: (updatedLessons: Lesson[]) => void;
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+        <Card className="p-8 flex flex-col gap-12">
+          <div className="flex md:flex-row flex-col-reverse justify-between gap-4">
+            <h2 className="text-3xl text-primary font-semibold">Podstawowe informacje o&nbsp;kursie</h2>
+            <div className=" flex md:flex-col flex-row md:items-end items-center gap-2">
+              <Tooltip
+                content="Kurs można opublikować w ostatnim kroku kreatora."
+                isDisabled={courseData.creator_state === "edit"}
+                placement="top"
+              >
+                <Chip
+                  color={courseData.is_public ? "success" : "danger"}
+                  size="lg"
+                  startContent={courseData.is_public ? <CheckCircle /> : <XCircle />}
+                >
+                  {!courseData.is_public ? "Wersja robocza" : "Kurs publiczny"}
+                </Chip>
+              </Tooltip>
+              {courseData.creator_state === "edit" &&
+                <Button color="primary" variant="shadow" onClick={() => handleUpdateCourseDetails(courseId, true)}>
+                  {courseData.is_public ? "Wersja robocza" : "Opublikuj kurs"}
+                </Button>
+              }
+            </div>
+          </div>
 
-  // const handleAddLesson = () => {
-  //   const newLesson: Lesson = {
-  //     id: Date.now().toString(),
-  //     name: "Nowa lekcja",
-  //     order: module.lessons.length + 1,
-  //     introduction: { id: Date.now().toString(), description: "" },
-  //     quiz: { id: Date.now().toString(), questions: [] },
-  //     assignment: { id: Date.now().toString(), instructions: "" },
-  //   };
+          <form className="overflow-visible flex flex-col gap-5">
+            <Input
+              color={courseDataError.name ? "danger" : "default"}
+              errorMessage="Podanie tematu kursu jest wymagane!"
+              isInvalid={courseDataError.name}
+              isRequired={true}
+              label="Temat kursu"
+              labelPlacement="outside"
+              name="name"
+              placeholder="Podaj temat kursu"
+              value={courseData.name}
+              onChange={handleCourseChange}
+            />
+            <Textarea
+              color={courseDataError.description ? "danger" : "default"}
+              errorMessage="Podanie opisu kursu jest wymagane!"
+              isInvalid={courseDataError.description}
+              isRequired={true}
+              label="Opis kursu"
+              labelPlacement="outside"
+              name="description"
+              placeholder="Przedstaw swój kurs, aby zachęcić osby do udziału w nim."
+              value={courseData.description}
+              onChange={handleCourseChange}
+            />
 
-  //   onUpdateLessons([...module.lessons, newLesson]);
-  // };
+            {courseData.creator_state === "details" &&
+              <div className="flex md:flex-row flex-col gap-4 mt-4">
+                <Button color="primary" variant="ghost" onClick={(e) => handleCreateCourse(e, false)}>
+                  Zapisz i kontynuuj własnoręczne tworzenie kursu
+                </Button>
+                <Button color="secondary" variant="ghost" onClick={(e) => handleCreateCourse(e, true)}>
+                  Zapisz i wygeneruj moduły kursu
+                </Button>
+              </div>
+            }
+          </form>
+        </Card>
 
-  const handleUpdateLessonName = (id: string, newName: string) => {
-    onUpdateLessons(
-      module.lessons.map((lesson) =>
-        lesson.id === id ? { ...lesson, name: newName } : lesson
-      )
-    );
-  };
-
-  const handleRemoveLesson = (id: string) => {
-    onUpdateLessons(module.lessons.filter((lesson) => lesson.id !== id));
-  };
-
-  const handleReorderLessons = (newOrder: Lesson[]) => {
-    onUpdateLessons(
-      newOrder.map((lesson, index) => ({
-        ...lesson,
-        order: index + 1,
-      }))
-    );
-  };
-
-  return (
-    <Reorder.Item
-      className="rounded-xl shadow p-4 bg-default-200"
-      id={module.id}
-      value={module}
-    >
-      <div className="flex items-center gap-2">
-        <div className="cursor-grab flex items-center justify-center w-6 h-6 mr-2">
-          <span className="icon text-xl text-default-600">⋮⋮</span>
-        </div>
-        <Input
-          color="default"
-          isDisabled={creator_state !== "module-topics" && creator_state !== "edit"}
-          placeholder="Podaj nazwę modułu"
-          type="text"
-          value={module.name}
-          onChange={(e) => onUpdateName(e.target.value)}
-        />
-        <Button
-          color="danger"
-          isDisabled={creator_state !== "module-topics" && creator_state !== "edit"}
-          variant="shadow"
-          onClick={onRemove}
-        >
-          <Trash2 />
-        </Button>
-        <Button className="bg-default-400 text-white" variant="shadow" onClick={() => setIsExpanded((prev) => !prev)}>
-          {isExpanded ? <ChevronDown /> : <ChevronLeft />}
-        </Button>
-      </div>
-
-      {
-        isExpanded && (
-          <div className="mt-4 pl-16 flex flex-col gap-4">
-            <h4 className="text-xl font-semibold text-primary-600">Lekcje</h4>
+        {(courseData.creator_state != "details") && (
+          <Card className="p-8 flex flex-col gap-4">
+            <h2 className="text-3xl text-primary font-semibold mb-4">Zawartość kursu</h2>
+            <h3 className="text-xl text-primary-600 font-semibold">Moduły</h3>
             <Reorder.Group
               axis="y"
-              className="flex flex-col gap-2"
-              values={module.lessons}
-              onReorder={(newOrder) =>
-                onUpdateLessons(
-                  newOrder.map((lesson, index) => ({
-                    ...lesson,
-                    order: index + 1,
-                  }))
-                )
-              }
+              className="flex flex-col gap-5"
+              values={courseData.modules}
+              onReorder={handleReorder}
             >
-              {module.lessons.map((lesson) => (
-                <LessonAccordionItem
-                  key={lesson.id}
-                  creator_state={creator_state}
-                  lesson={lesson}
-                  onRemoveLesson={() =>
-                    onUpdateLessons(
-                      module.lessons.filter((l) => l.id !== lesson.id)
-                    )
+              {courseData.modules.map((module) => (
+                <ModuleAccordionItem
+                  key={module.id}
+                  creator_state={courseData.creator_state}
+                  module={module}
+                  onRemove={() => handleRemoveModule(module.id)}
+                  onUpdateLessons={(updatedLessons) =>
+                    handleUpdateModuleLessons(module.id, updatedLessons)
                   }
-                  onUpdateLesson={(updatedLesson) =>
-                    onUpdateLessons(
-                      module.lessons.map((l) =>
-                        l.id === lesson.id ? updatedLesson : l
-                      )
-                    )
-                  }
+                  onUpdateName={(newName) => handleUpdateModuleName(module.id, newName)}
                 />
               ))}
             </Reorder.Group>
-            {(creator_state === "lesson-topics" || creator_state === "edit") &&
+            {(courseData.creator_state === "module-topics" || courseData.creator_state === "edit") &&
               <Button
-                className="bg-default-300 border border-dashed border-default-600 rounded-xl p-4 text-center hover:text-black hover:border-black cursor-pointer"
-                onClick={() => {
-                  const newLesson: Lesson = {
-                    id: Date.now().toString(),
-                    topic: "Nowa lekcja",
-                    order: module.lessons.length + 1,
-                    introduction: {
-                      id: Date.now().toString(),
-                      description: "Brak opisu",
-                    },
-                    quiz: [],
-                    assignment: {
-                      id: Date.now().toString(),
-                      instructions: "Brak instrukcji",
-                    },
-                  };
-
-                  onUpdateLessons([...module.lessons, newLesson]);
-                }}
+                className="bg-default-200 border border-dashed border-default-600 rounded-xl p-4 text-center hover:text-black hover:border-black cursor-pointer"
+                onClick={handleAddModule}
               >
-                Dodaj nową lekcję
+                Dodaj nowy moduł
               </Button>
             }
-          </div>
-        )
-      }
-    </Reorder.Item>
-  );
-};
-
-
-
-
-const LessonAccordionItem = ({
-  creator_state,
-  lesson,
-  onUpdateLesson,
-  onRemoveLesson,
-}: {
-  creator_state: string,
-  lesson: Lesson;
-  onUpdateLesson: (updatedLesson: Lesson) => void;
-  onRemoveLesson: () => void;
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  return (
-    <Reorder.Item
-      className="bg-default-300 rounded-xl shadow p-4 "
-      id={lesson.id}
-      value={lesson}
-    >
-      <div className="flex items-center gap-2">
-        <div className="cursor-grab flex items-center justify-center w-6 h-6 mr-2">
-          <span className="icon text-xl text-default-600">⋮⋮</span>
-        </div>
-        <Input
-          color="default"
-          isDisabled={creator_state != "lesson-topics" && creator_state != "edit"}
-          placeholder="Podaj nazwę lekcji"
-          type="text"
-          value={lesson.topic}
-          onChange={(e) =>
-            onUpdateLesson({ ...lesson, topic: e.target.value })
-          }
+            {courseData.creator_state === "module-topics" && (
+              <div className="flex md:flex-row flex-col gap-4 mt-4">
+                <Button color="primary" variant="ghost" onClick={(e) => handleCreateModules(e, false)}>
+                  Zapisz moduły i kontynuuj własnoręczne tworzenie kursu
+                </Button>
+                <Button color="secondary" variant="ghost" onClick={(e) => handleCreateModules(e, true)}>
+                  Zapisz moduły i wygeneruj tematy lekcji
+                </Button>
+              </div>
+            )}
+            {courseData.creator_state === "lesson-topics" && (
+              <div className="flex md:flex-row flex-col gap-4 mt-4">
+                <Button color="primary" variant="ghost" onClick={(e) => handleCreateLessons(e, false)}>
+                  Zapisz tematy lekcji i kontynuuj własnoręczne tworzenie kursu
+                </Button>
+                <Button color="secondary" variant="ghost" onClick={(e) => handleCreateLessons(e, true)}>
+                  Zapisz tematy lekcji i wygeneruj zawartość lekcji
+                </Button>
+              </div>
+            )}
+            {(courseData.creator_state === "lesson-content" || courseData.creator_state === "edit") && (
+              <div className="flex md:flex-row flex-col gap-4 mt-4">
+                <Button color="primary" variant="ghost" onClick={(e) => handleUpdateCourse(e)}>
+                  Zapisz zawartość lekcji
+                </Button>
+              </div>
+            )}
+          </Card>
+        )}
+        <ErrorAlert
+          body={validationMessage}
+          header="Walidacja kursu nie powiodła się"
+          isOpen={isErrorOpen}
+          onClose={() => setIsErrorOpen(false)}
         />
-        <Button color="danger" variant="shadow" onClick={onRemoveLesson}>
-          <Trash2 />
-        </Button>
-        <Button
-          className="bg-default-400 text-white"
-          variant="shadow"
-          onClick={() => setIsExpanded((prev) => !prev)}
-        >
-          {isExpanded ? <ChevronDown /> : <ChevronLeft />}
-        </Button>
       </div>
-
-      {isExpanded && (
-        <div className="mt-4 pl-16">
-          <Accordion
-            isCompact={true}
-            isDisabled={creator_state != "lesson-content" && creator_state != "edit"}
-            variant="splitted"
-          >
-            <AccordionItem title="Wprowadzenie do lekcji">
-              <ReactQuill
-                theme="snow"
-                value={lesson.introduction.description || ""}
-                onChange={(content) =>
-                  onUpdateLesson({
-                    ...lesson,
-                    introduction: {
-                      id: lesson.introduction.id || Date.now().toString(),
-                      description: content,
-                    },
-                  })
-                }
-              />
-            </AccordionItem>
-
-            <AccordionItem title="Quiz">
-              <QuizEditor
-                quiz={{
-                  id: lesson.id,
-                  questions: lesson.quiz,
-                }}
-                onUpdateQuiz={(updatedQuiz) =>
-                  onUpdateLesson({
-                    ...lesson,
-                    quiz: updatedQuiz.questions,
-                  })
-                }
-              />
-            </AccordionItem>
-
-            <AccordionItem title="Zadanie">
-              <ReactQuill
-                theme="snow"
-                value={lesson.assignment.instructions || ""}
-                onChange={(content) =>
-                  onUpdateLesson({
-                    ...lesson,
-                    assignment: {
-                      id: lesson.assignment?.id || Date.now().toString(),
-                      instructions: content,
-                    },
-                  })
-                }
-              />
-            </AccordionItem>
-          </Accordion>
-        </div>
-      )}
-    </Reorder.Item>
-  );
-};
-
-
-const QuizEditor = ({
-  quiz,
-  onUpdateQuiz,
-}: {
-  quiz: Quiz;
-  onUpdateQuiz: (updatedQuiz: Quiz) => void;
-}) => {
-  const handleAddQuestion = () => {
-    onUpdateQuiz({
-      ...quiz,
-      questions: [
-        ...quiz.questions,
-        {
-          id: Date.now().toString(),
-          question: "Nowe pytanie",
-          answers: [
-            { id: Date.now().toString(), answer: "Odpowiedź 1", is_correct: false },
-          ],
-        },
-      ],
-    });
-  };
-
-  const handleQuestionChange = (qIndex: number, question: string) => {
-    onUpdateQuiz({
-      ...quiz,
-      questions: quiz.questions.map((q, i) =>
-        i === qIndex ? { ...q, question } : q
-      ),
-    });
-  };
-
-  const handleAddOption = (qIndex: number) => {
-    onUpdateQuiz({
-      ...quiz,
-      questions: quiz.questions.map((q, i) =>
-        i === qIndex
-          ? {
-            ...q,
-            answers: [
-              ...q.answers,
-              {
-                id: Date.now().toString(),
-                answer: `Nowa odpowiedź ${q.answers.length + 1}`,
-                is_correct: false,
-              },
-            ],
-          }
-          : q
-      ),
-    });
-  };
-
-
-  const handleOptionChange = (
-    qIndex: number,
-    oIndex: number,
-    value: string
-  ) => {
-    onUpdateQuiz({
-      ...quiz,
-      questions: quiz.questions.map((q, i) =>
-        i === qIndex
-          ? {
-            ...q,
-            answers: q.answers.map((a, j) =>
-              j === oIndex ? { ...a, answer: value } : a
-            ),
-          }
-          : q
-      ),
-    });
-  };
-
-
-  const handleCorrectAnswerChange = (qIndex: number, oIndex: number) => {
-    onUpdateQuiz({
-      ...quiz,
-      questions: quiz.questions.map((q, i) =>
-        i === qIndex
-          ? {
-            ...q,
-            answers: q.answers.map((a, j) => ({
-              ...a,
-              is_correct: j === oIndex,
-            })),
-          }
-          : q
-      ),
-    });
-  };
-
-
-  return (
-    <div>
-      {quiz.questions.map((question, qIndex) => (
-        <div key={question.id} className="mb-4 p-4 border rounded">
-          <Input
-            placeholder="Podaj pytanie"
-            value={question.question}
-            onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
-          />
-          {question.answers.map((option, oIndex) => (
-            <div key={option.id} className="flex items-center gap-2 mt-2">
-              <Input
-                placeholder={`Odpowiedź ${oIndex + 1}`}
-                value={option.answer}
-                onChange={(e) =>
-                  handleOptionChange(qIndex, oIndex, e.target.value)
-                }
-              />
-              <Switch
-                isSelected={option.is_correct}
-                onChange={() => handleCorrectAnswerChange(qIndex, oIndex)}
-              />
-            </div>
-          ))}
-          <Button
-            className="mt-2"
-            onClick={() => handleAddOption(qIndex)}
-          >
-            Dodaj Odpowiedź
-          </Button>
-        </div>
-      ))}
-      <Button
-        className="mt-4"
-        onClick={handleAddQuestion}
-      >
-        Dodaj Pytanie
-      </Button>
     </div>
   );
 };

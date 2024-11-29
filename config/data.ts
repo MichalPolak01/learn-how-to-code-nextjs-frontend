@@ -19,8 +19,4 @@ export const createCoursePath = [
         value: "edit",
         label: "Edytuj całość kursu",
     },
-    // {
-    //     value: "publish",
-    //     label: "Opublikuj kurs"
-    // }
 ]
