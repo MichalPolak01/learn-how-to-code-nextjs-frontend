@@ -23,21 +23,17 @@ export const siteConfig = {
   navTeacherItems: [
     {
       label: "Home",
-<<<<<<< Updated upstream
-      href: "teacher/home",
-=======
       href: "/home",
->>>>>>> Stashed changes
       authRequired: true
     },
     {
       label: "Kursy",
-      href: "teacher/courses",
+      href: "/teacher/courses",
       authRequired: true
     },
     {
       label: "Stwórz kurs",
-      href: "teacher/courses/wizard",
+      href: "/teacher/course/wizard",
       authRequired: true
     },
   ],
@@ -87,12 +83,5 @@ export const siteConfig = {
       label: "Register",
       href: "/register"
     }
-  ],
-  links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui.org",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
-  },
+  ]
 };
