@@ -23,7 +23,11 @@ export const siteConfig = {
   navTeacherItems: [
     {
       label: "Home",
+<<<<<<< Updated upstream
       href: "teacher/home",
+=======
+      href: "/home",
+>>>>>>> Stashed changes
       authRequired: true
     },
     {
