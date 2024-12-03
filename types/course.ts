@@ -70,3 +70,10 @@ interface CoursePreview {
   lesson_count: number;
   creator_state: string;
 }
+
+
+interface CourseStats {
+  courses_count: number;
+  students_count: number;
+  completed_lessons: number;
+}
