@@ -11,6 +11,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { useAuth } from '@/providers/authProvider';
 import { showToast } from '@/lib/showToast';
 
+
 interface CourseCaruselProps {
   title: string;
   sortBy?: string;
