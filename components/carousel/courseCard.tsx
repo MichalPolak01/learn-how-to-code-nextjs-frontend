@@ -19,7 +19,7 @@ export default function CourseCard({ course }: CardProps) {
     const router = useRouter();
 
     const handleCardClick = () => {
-        router.push(`/course/${course.id}`);
+        router.push(`/courses/${course.id}`);
     };
 
     const handleEditQuiz = () => {

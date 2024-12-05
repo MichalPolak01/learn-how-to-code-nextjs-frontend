@@ -28,7 +28,7 @@ export const siteConfig = {
     },
     {
       label: "Kursy",
-      href: "/teacher/courses",
+      href: "/courses",
       authRequired: true
     },
     {
