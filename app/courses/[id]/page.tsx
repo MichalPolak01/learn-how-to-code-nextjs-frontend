@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Card } from "@nextui-org/card";
+import Link from "next/link";
+import { Computer, ScrollText, Trophy } from "lucide-react";
 
 import { showToast } from "@/lib/showToast";
 import { useAuth } from "@/providers/authProvider";
+import { Spinner } from "@nextui-org/spinner";
 
 
 interface LessonStat {
@@ -37,16 +41,19 @@ interface LessonStat {
   
           if (response.status === 401) {
             auth.loginRequired();
+
             return;
           }
   
           if (!response.ok) {
             showToast("Nie udało się znaleźć kursu.", true);
             router.push("/courses");
+
             return;
           }
   
           const data = await response.json();
+
           setCourse(data);
         } catch (error) {
           showToast("Nie udało się wczytać kursu.", true);
@@ -64,14 +71,16 @@ interface LessonStat {
           });
   
           if (!response.ok) {
-            console.error("Nie udało się pobrać statystyk.");
+            showToast("Nie udało się pobrać statystyk.", true);
+
             return;
           }
   
           const stats = await response.json();
+          
           setLessonStats(stats);
         } catch (error) {
-          console.error("Błąd podczas pobierania statystyk.", error);
+          showToast(`Błąd podczas pobierania statystyk.", ${error}`, true );
         }
       };
   
@@ -81,14 +90,6 @@ interface LessonStat {
   
     const getLessonStats = (lessonId: string) =>
       lessonStats.find((stat) => stat.lesson_id === lessonId);
-  
-    const handleNavigation = (
-      moduleId: string,
-      lessonId: string,
-      section: "introduction" | "quiz" | "assignment"
-    ) => {
-      router.push(`/course/${course?.id}/module/${moduleId}/lesson/${lessonId}/${section}`);
-    };
   
     const isLessonUnlocked = (moduleIndex: number, lessonIndex: number) => {
       if (moduleIndex === 0 && lessonIndex === 0) {
@@ -115,22 +116,22 @@ interface LessonStat {
   
     if (!course) {
       return (
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-primary-500">Ładowanie kursu...</h1>
+        <div className="fixed inset-0 z-50 flex items-center justify-center pb-40 bg-black/70 backdrop-blur-sm">
+          <Spinner color="primary" label="Ładowanie kursu.." labelColor="primary" size="lg" />
         </div>
       );
     }
   
     return (
-      <div className="p-6">
+      <div className="sm:p-6 p-2">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-primary-500">{course?.name}</h1>
-          <p className="text-lg text-gray-600">{course?.description}</p>
+          <p className="text-lg text-default-600">{course?.description}</p>
         </div>
   
         {course?.modules.map((module, moduleIndex) => (
-          <div key={module.id} className="mb-6 border rounded-lg p-4 bg-gray-50">
-            <h2 className="text-xl font-semibold text-primary-700 mb-4">{module.name}</h2>
+          <div key={module.id} className="mb-6 border border-default-200 rounded-lg p-4 ">
+            <h2 className="text-xl font-semibold text-primary-600 mb-4">{module.name}</h2>
   
             <ul className="space-y-4">
               {module.lessons.map((lesson, lessonIndex) => {
@@ -148,52 +149,39 @@ interface LessonStat {
                   <li
                     key={lesson.id}
                     className={`border rounded-lg p-4 shadow-sm ${
-                      lessonCompleted ? "bg-green-50" : "bg-white"
-                    } ${lessonUnlocked ? "" : "opacity-50 pointer-events-none"}`}
+                      lessonCompleted ? "bg-success-100 border-success-700" : " border-default-300"
+                    } ${lessonUnlocked ? "" : "opacity-40 pointer-events-none"}`}
                   >
-                    <h3 className="text-lg font-medium text-gray-700 mb-8">{lesson.topic}</h3>
-                    <div className="flex flex-wrap gap-4 mt-2">
+                    <h3 className="text-lg font-medium text-default-800 mb-8">{lesson.topic}</h3>
+                    <div className="flex flex-wrap flex-col sm:flex-row gap-4 mt-2">
                       {lesson.introduction && (
-                        <button
-                          className={`px-4 py-2 ${
-                            introductionCompleted
-                              ? "bg-success-200 hover:bg-success-300"
-                              : "bg-blue-500 hover:bg-blue-600"
-                          } hover:scale-110 text-white rounded-lg`}
-                          onClick={() =>
-                            handleNavigation(module.id, lesson.id, "introduction")
-                          }
-                        >
-                          Wprowadzenie
-                        </button>
+                        <Card className={`sm:w-[8rem] h-[4rem] hover:scale-110 ${introductionCompleted? "bg-success-300 border-success-700" : "border-warning-600 bg-warning-50"} border-2`}>
+                        <Link className=" text-default-900 flex flex-col justify-center items-center h-full cursor-pointer" 
+                            href={`/course/${course?.id}/module/${module.id}/lesson/${lesson.id}/introduction`}>
+                          <ScrollText />
+                          <h3 className={`text-sm text-center text-default-900 font-semibold`}>Wprowadzenie</h3>
+                        </Link>
+                      </Card>
                       )}
   
                       {lesson.quiz.length > 0 && (
-                        <button
-                          className={`px-4 py-2 ${
-                            quizPassed
-                              ? "bg-success-200 hover:bg-success-300"
-                              : "bg-secondary hover:bg-secondary-600"
-                          } hover:scale-110 text-white rounded-lg`}
-                          onClick={() => handleNavigation(module.id, lesson.id, "quiz")}
-                        >
-                          Quiz
-                        </button>
+                        <Card className={`sm:w-[8rem] h-[4rem] hover:scale-110 ${quizPassed? "bg-success-300 border-success-700" : "border-secondary-600 bg-secondary-50"} border-2`}>
+                        <Link className=" text-default-900 flex flex-col justify-center items-center h-full cursor-pointer" 
+                            href={`/course/${course?.id}/module/${module.id}/lesson/${lesson.id}/quiz`}>
+                          <Trophy />
+                          <h3 className={`text-sm text-center text-default-900 font-semibold`}>Quiz</h3>
+                        </Link>
+                      </Card>
                       )}
   
                       {lesson.assignment && (
-                        <button
-                          className={`px-4 py-2 ${
-                            assignmentPassed
-                              ? "bg-success-200 hover:bg-success-300"
-                              : "bg-warning hover:bg-warning-600"
-                          } hover:scale-110 text-white rounded-lg`}
-                          onClick={() =>
-                            handleNavigation(module.id, lesson.id, "assignment")
-                          }
-                        >
-                          Zadanie
-                        </button>
+                        <Card className={`sm:w-[8rem] h-[4rem] hover:scale-110 ${assignmentPassed? "bg-success-300 border-success-700" : "border-danger-600 bg-danger-50"} border-2`}>
+                        <Link className=" text-default-900 flex flex-col justify-center items-center h-full cursor-pointer" 
+                            href={`/course/${course?.id}/module/${module.id}/lesson/${lesson.id}/assignment`}>
+                          <Computer />
+                          <h3 className={`text-sm text-center  font-semibold`}>Zadanie</h3>
+                        </Link>
+                      </Card>
                       )}
                     </div>
                   </li>
