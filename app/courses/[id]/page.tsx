@@ -9,6 +9,10 @@ import { Computer, ScrollText, Trophy } from "lucide-react";
 import { showToast } from "@/lib/showToast";
 import { useAuth } from "@/providers/authProvider";
 import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@nextui-org/spinner";
+
+import { showToast } from "@/lib/showToast";
+import { useAuth } from "@/providers/authProvider";
 
 
 interface LessonStat {

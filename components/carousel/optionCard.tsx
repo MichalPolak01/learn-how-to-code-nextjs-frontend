@@ -10,6 +10,9 @@ interface OptionCardProps {
   icon: LucideIcon;
   text: string;
   href: string;
+    icon: LucideIcon;
+    text: string;
+    href: string;
 }
 
 export default function OptionCard({ color, icon: Icon, text, href }: OptionCardProps) {
