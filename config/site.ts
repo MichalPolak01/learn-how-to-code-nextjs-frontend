@@ -3,67 +3,85 @@ export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "Next.js + NextUI",
   description: "Make beautiful websites regardless of your design experience.",
-  navItems: [
+  navUserItems: [
     {
       label: "Home",
-      href: "/",
+      href: "/home",
+      authRequired: true
     },
     {
-      label: "Docs",
-      href: "/docs",
+      label: "Quizy",
+      href: "/quizzes",
+      authRequired: true
     },
     {
-      label: "Pricing",
-      href: "/pricing",
+      label: "Stwórz quiz",
+      href: "/quizzes/wizard",
+      authRequired: true
+    },
+  ],
+  navTeacherItems: [
+    {
+      label: "Home",
+      href: "/home",
+      authRequired: true
     },
     {
-      label: "Blog",
-      href: "/blog",
+      label: "Kursy",
+      href: "/courses",
+      authRequired: true
     },
     {
-      label: "About",
-      href: "/about",
+      label: "Stwórz kurs",
+      href: "/teacher/course/wizard",
+      authRequired: true
     },
   ],
   navMenuItems: [
     {
-      label: "Profile",
+      label: "Home",
+      href: "/home",
+      authRequired: true
+    },
+    {
+      label: "Quizy",
+      href: "/quizzes",
+      authRequired: true
+    },
+    {
+      label: "Stwórz quiz",
+      href: "/quizzes/wizard",
+      authRequired: true
+    },
+    {
+      label: "Ustwaienia profilowe",
       href: "/profile",
+      authRequired: true
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Logowanie",
+      href: "/login",
+      authRequired: false
     },
     {
-      label: "Projects",
-      href: "/projects",
-    },
-    {
-      label: "Team",
-      href: "/team",
-    },
-    {
-      label: "Calendar",
-      href: "/calendar",
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
+      label: "Rejestracja",
+      href: "/register",
+      authRequired: false
     },
     {
       label: "Logout",
       href: "/logout",
-    },
+      authRequired: true
+    }
   ],
-  links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui.org",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
-  },
+  navMenuAuth: [
+    {
+      label: "Login",
+      href: "/login"
+    },
+    {
+      label: "Register",
+      href: "/register"
+    }
+  ]
 };

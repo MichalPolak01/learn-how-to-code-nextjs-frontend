@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { Card } from "@nextui-org/card";
 import Link from "next/link";
 import { Computer, ScrollText, Trophy } from "lucide-react";
+
+import { showToast } from "@/lib/showToast";
+import { useAuth } from "@/providers/authProvider";
+import { Spinner } from "@nextui-org/spinner";
 import { Spinner } from "@nextui-org/spinner";
 
 import { showToast } from "@/lib/showToast";

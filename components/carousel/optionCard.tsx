@@ -7,6 +7,9 @@ import { LucideIcon } from "lucide-react";
 
 interface OptionCardProps {
     color: string;
+  icon: LucideIcon;
+  text: string;
+  href: string;
     icon: LucideIcon;
     text: string;
     href: string;
