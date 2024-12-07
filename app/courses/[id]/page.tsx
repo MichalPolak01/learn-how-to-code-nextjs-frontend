@@ -9,10 +9,10 @@ import { Computer, ScrollText, Trophy } from "lucide-react";
 import { showToast } from "@/lib/showToast";
 import { useAuth } from "@/providers/authProvider";
 import { Spinner } from "@nextui-org/spinner";
-import { Spinner } from "@nextui-org/spinner";
+// import { Spinner } from "@nextui-org/spinner";
 
-import { showToast } from "@/lib/showToast";
-import { useAuth } from "@/providers/authProvider";
+// import { showToast } from "@/lib/showToast";
+// import { useAuth } from "@/providers/authProvider";
 
 
 interface LessonStat {
@@ -161,7 +161,7 @@ interface LessonStat {
                       {lesson.introduction && (
                         <Card className={`sm:w-[8rem] h-[4rem] hover:scale-110 ${introductionCompleted? "bg-success-300 border-success-700" : "border-warning-600 bg-warning-50"} border-2`}>
                         <Link className=" text-default-900 flex flex-col justify-center items-center h-full cursor-pointer" 
-                            href={`/course/${course?.id}/module/${module.id}/lesson/${lesson.id}/introduction`}>
+                            href={`/courses/${course?.id}/lesson/${lesson.id}/introduction`}>
                           <ScrollText />
                           <h3 className={`text-sm text-center text-default-900 font-semibold`}>Wprowadzenie</h3>
                         </Link>
@@ -171,7 +171,7 @@ interface LessonStat {
                       {lesson.quiz.length > 0 && (
                         <Card className={`sm:w-[8rem] h-[4rem] hover:scale-110 ${quizPassed? "bg-success-300 border-success-700" : "border-secondary-600 bg-secondary-50"} border-2`}>
                         <Link className=" text-default-900 flex flex-col justify-center items-center h-full cursor-pointer" 
-                            href={`/course/${course?.id}/module/${module.id}/lesson/${lesson.id}/quiz`}>
+                            href={`/course/${course?.id}/lesson/${lesson.id}/quiz`}>
                           <Trophy />
                           <h3 className={`text-sm text-center text-default-900 font-semibold`}>Quiz</h3>
                         </Link>
@@ -181,7 +181,7 @@ interface LessonStat {
                       {lesson.assignment && (
                         <Card className={`sm:w-[8rem] h-[4rem] hover:scale-110 ${assignmentPassed? "bg-success-300 border-success-700" : "border-danger-600 bg-danger-50"} border-2`}>
                         <Link className=" text-default-900 flex flex-col justify-center items-center h-full cursor-pointer" 
-                            href={`/course/${course?.id}/module/${module.id}/lesson/${lesson.id}/assignment`}>
+                            href={`/course/${course?.id}/lesson/${lesson.id}/assignment`}>
                           <Computer />
                           <h3 className={`text-sm text-center  font-semibold`}>Zadanie</h3>
                         </Link>
