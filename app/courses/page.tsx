@@ -8,7 +8,7 @@ import { showToast } from "@/lib/showToast";
 import { useAuth } from "@/providers/authProvider";
 import CourseCard from "@/components/carousel/courseCard";
 
-const COURSE_URL = "/api/teacher/course";
+const COURSE_URL = "/api/course";
 
 
 export default function CoursesPage() {

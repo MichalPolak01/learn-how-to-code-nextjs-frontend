@@ -17,6 +17,8 @@ interface IntroductionPageProps {
   };
 }
 
+const COURSE_URL = "/api/course";
+
 export default function IntroductionPage({params}: IntroductionPageProps) {
   const { id, lessonId } = params;
   const router = useRouter();
@@ -28,7 +30,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
   useEffect(() => {
     const fetchLessonData = async () => {
       try {
-        const response = await fetch(`/api/teacher/course/${id}/module/0/lesson/${lessonId}`);
+        const response = await fetch(`${COURSE_URL}/${id}/module/0/lesson/${lessonId}`);
 
         if (response.status === 401) {
           auth.loginRequired();
@@ -68,7 +70,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
 
     const fetchLessonStats = async () => {
       try {
-        const response = await fetch(`/api/teacher/course/${id}/stats`, {
+        const response = await fetch(`${COURSE_URL}/${id}/stats`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -123,7 +125,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
 
   const updateLessonStats = async () => {
     try {
-      const response = await fetch(`/api/teacher/course/${id}/stats`, {
+      const response = await fetch(`${COURSE_URL}/${id}/stats`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -164,7 +166,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
 
   return (
     <div className="p-6">
-      <div className="flex sm:flex-row flex-col gap-2 justify-between items-center mb-4">
+      <div className="flex sm:flex-row flex-col gap-2 justify-between items-center mb-6 px-4">
         <h1 className="text-3xl text-primary font-bold">Wprowadzenie</h1>
         {(lessonStats && lessonStats.introduction_completed) && <div className="flex items-center gap-2 text-success"><BadgeCheck/><span>Ukończono</span></div>}
       </div>

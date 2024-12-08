@@ -16,7 +16,7 @@ interface CourseCaruselProps {
   sortBy?: string;
 }
 
-const COURSE_URL = "/api/teacher/course";
+const COURSE_URL = "/api/course";
 
 export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
   const [courses, setCourses] = useState<CoursePreview[]>([]);

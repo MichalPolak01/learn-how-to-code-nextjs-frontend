@@ -21,7 +21,7 @@ import { showToast } from "@/lib/showToast";
 import RowSteps from "@/components/course_wizard/rowSteps";
 
 
-const CREATE_COURSE_URL = "/api/teacher/course";
+const COURSE_URL = "/api/course";
 
 interface CoursePageProps {
   courseId?: number | null;
@@ -135,7 +135,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       if (!courseId) return;
 
       try {
-        const response = await fetch(`/api/teacher/course/${courseId}`, {
+        const response = await fetch(`${COURSE_URL}/${courseId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -150,7 +150,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
         if (!response.ok) {
           showToast("Nie udało się znaleźć kursu.", true);
-          router.push("/teacher/course/wizard");
+          router.push("/course-wizard");
 
           return;
         }
@@ -163,7 +163,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
         if (data.author.username !== auth.username) {
           showToast("Ten kurs nie należy do Ciebie.", true);
-          router.push("/teacher/course/wizard");
+          router.push("/course-wizard");
 
           return;
         }
@@ -174,7 +174,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
       } catch (error) {
         showToast("Nie udało się wczytać kursu.", true);
-        router.push("/teacher/course/wizard");
+        router.push("/course-wizard");
 
         return;
       }
@@ -221,7 +221,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     try {
       setLoading(true);
       const nextState = handleNextState();
-      const url = new URL(window.location.origin + CREATE_COURSE_URL);
+      const url = new URL(window.location.origin + COURSE_URL);
 
       if (generate) {
         url.searchParams.set("generate", "true");
@@ -277,7 +277,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       setCourseData(formatted);
       showToast(`Utworzono nowy kurs`, false);
 
-      router.push(`/teacher/course/wizard/${data.id}`);
+      router.push(`/course-wizard/${data.id}`);
     } catch (error) {
       showToast(`Nie udało się stworzyć kursu. ${error}`, true);
     } finally {
@@ -303,7 +303,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
     try {
       setLoading(true);
-      const response = await fetch(`${CREATE_COURSE_URL}/${courseId}`, {
+      const response = await fetch(`${COURSE_URL}/${courseId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -345,7 +345,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
     try {
       setLoading(true);
-      const url = new URL(`${window.location.origin}/api/teacher/course/${courseId}/module`);
+      const url = new URL(`${window.location.origin}${COURSE_URL}/${courseId}/module`);
 
       if (generate) {
         url.searchParams.set("generate", "true");
@@ -421,7 +421,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         }
 
         const url = new URL(
-          `${window.location.origin}/api/teacher/course/${courseId}/module/${module.id}/lesson`
+          `${window.location.origin}${COURSE_URL}/${courseId}/module/${module.id}/lesson`
         );
 
         if (generate) {
@@ -509,7 +509,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
     try {
       setLoading(true);
-      const url = `${window.location.origin}/api/teacher/course/${courseData.id}`;
+      const url = `${window.location.origin}${COURSE_URL}/${courseData.id}`;
       const response = await fetch(url, {
         method: "PUT",
         headers: {
