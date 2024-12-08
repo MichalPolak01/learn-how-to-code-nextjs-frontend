@@ -154,7 +154,6 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
   };
 
   const handleCompleteQuiz = async () => {
-    
     router.push(`/courses/${id}/lesson/${lessonId}/assignment`);
   };
 
@@ -178,7 +177,9 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
                 {(lessonStats && lessonStats.quiz_score != 0) && <p>Najlepszy wynik: {Math.max(lessonStats.quiz_score, result)}%</p>}
               </div>
             </div>
-            <p className="mt-4 text-lg">{currentQuestion?.question}</p>
+            {currentQuestion?.question &&
+            <div dangerouslySetInnerHTML={{ __html: currentQuestion?.question }} className="mt-4 text-lg" />
+            }
             <div className="options-container mt-4">
               {currentQuestion?.answers.map((option) => (
                 <button
@@ -205,9 +206,15 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
           </>
         ) : (
           <div className="flex flex-col gap-4 items-center">
-            <h2 className="text-3xl text-primary font-bold mb-8">Podsumowanie Quizu</h2>
-            <h3 className="text-3xl text-primary">
-              Zdobyto:{" "}
+            <h2 className="text-3xl text-primary font-bold mb-4">Podsumowanie Quizu</h2>
+            {Math.max(lessonStats.quiz_score, result) > 70?
+                <p className="text-3xl text-success">Quiz Zaliczony</p>
+                :
+                <p className="text-3xl text-danger">Quiz niezaliczony</p>
+            }
+            <p className="text-small font-light text-default-500">*Aby quiz był zaliczony, należy osiągnąć co najmniej 70% w najlepszym podejściu.</p>
+            <h3 className="text-2xl text-primary mt-4">
+              W tym podejściu zdobyto:{" "}
               <span
                 className={`${result >= 75
                     ? "text-success"
@@ -219,7 +226,7 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
                 {result}%
               </span>
             </h3>
-            <p className="text-xl font-semibold">
+            <p className="text-xl font-medium">
               Punkty:{" "}
               <span
                 className={`${result >= 75
@@ -232,6 +239,20 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
                 {score}/{quiz.questions.length}
               </span>
             </p>
+            <h3 className="text-2xl text-primary mt-4">
+              W najlepszym podejściu zdobyto:{" "}
+              <span 
+                className={`${Math.max(result, lessonStats.quiz_score) >= 75
+                    ? "text-success"
+                    : Math.max(result, lessonStats.quiz_score) >= 0.5
+                      ? "text-warning"
+                      : "text-danger"
+                  } font-bold`}
+              >
+                {Math.max(result, lessonStats.quiz_score)}%
+              </span>
+            </h3>
+
 
             <Button className="mt-8 hover:scale-105" color="primary" variant="shadow" onClick={handleRestartQuiz}>
               Uruchom ponownie quiz
