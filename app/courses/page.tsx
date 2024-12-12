@@ -19,6 +19,7 @@ export default function CoursesPage() {
     const auth = useAuth();
 
     const fetchCourses = async (filter: string) => {
+        setCourses([]);
         const query = new URLSearchParams({
             ...(filter && { sortBy: filter })
         });

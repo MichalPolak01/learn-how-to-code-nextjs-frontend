@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card } from "@nextui-org/card";
 import { Spinner } from "@nextui-org/spinner";
-import { BookmarkPlus, Computer, ScrollText, Trophy } from "lucide-react";
+import { BookmarkPlus, Computer, ScrollText, Star, Trophy } from "lucide-react";
 
 import { showToast } from "@/lib/showToast";
 import { useAuth } from "@/providers/authProvider";
@@ -26,6 +26,7 @@ interface LessonStat {
     const [course, setCourse] = useState<Course | undefined>(undefined);
     const [lessonStats, setLessonStats] = useState<LessonStat[]>([]);
     const [isEnrolled, setIsEnrolled] = useState(true);
+    const [rating, setRating] = useState(3);
   
     const auth = useAuth();
     const router = useRouter();
@@ -84,6 +85,7 @@ interface LessonStat {
 
         const stats = await response.json();
         
+        setIsEnrolled(true);
         setLessonStats(stats);
       } catch (error) {
         showToast(`Błąd podczas pobierania statystyk. ${error}`, true );
@@ -112,7 +114,10 @@ interface LessonStat {
         }
   
         if (!response.ok) {
-          throw new Error("Response not ok.")
+          const errorData = await response.json();
+          const errorMessage = errorData?.message || "Nieznany błąd.";
+
+          throw new Error(errorMessage);
         }
 
         showToast("Pomyślnie zapisano do kursu!", false);
@@ -122,6 +127,39 @@ interface LessonStat {
         showToast(`Błąd podczas zapisywania do kursu. ${error}`, true );
       }
     }
+
+  const handleRating = (index: number) => {
+    setRating(index);
+    updateCourseRating(index);
+  };
+  
+  const updateCourseRating = async (ratingValue: number) => {
+    try {
+      const response = await fetch(`${COURSE_URL}/${courseId}/rate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          score: ratingValue,
+        }),
+      });
+  
+      if (response.status === 401) {
+        auth.loginRequired();
+
+        return;
+      }
+  
+      if (!response.ok) {
+        throw new Error("Response not ok.");
+      }
+  
+      showToast(`Ustawiono ocenę kursu na ${ratingValue}!`, false);
+      await loadLessonStats();
+    } catch (error) {
+      showToast(`Błąd podczas ustawiania oceny kursu. ${error}`, true);
+    }
+  };
+  
 
     const getLessonStats = (lessonId: string) =>
       lessonStats.find((stat) => stat.lesson_id === lessonId);
@@ -145,7 +183,7 @@ interface LessonStat {
           <h1 className="text-3xl font-bold text-primary-500">{course?.name}</h1>
           <p className="text-lg text-default-600">{course?.description}</p>
 
-          {!isEnrolled &&
+          {!isEnrolled ?
             <Card className={`mt-4 sm:w-[12rem] h-[5rem] hover:scale-110 border-primary-600 bg-primary-50 border-2`}>
             <button className="flex flex-col justify-center items-center h-full cursor-pointer" onClick={handleEnrollToCourse}
                 >
@@ -153,7 +191,21 @@ interface LessonStat {
                  <h3 className={`text-sm text-center text-primary-600 font-semibold`}>Zapisz się do kursu</h3>
             </button>
           </Card>
+          :
+          <div>
+            <p className="mt-8 mb-2 text-lg text-primary font-semibold">Ocneń kurs:</p>
+          <div className="flex flex-row gap-1">
+            {Array.from({ length: 5 }, (_, index) => (
+              <Star
+                  key={index}
+                  className={`w-8 h-8 cursor-pointer ${index < rating ? "text-warning" : "text-default-300"}`}
+                  onClick={() => handleRating(index + 1)}
+              />
+            ))}
+          </div>
+          </div>
           }
+
         </div>
 
         {course?.modules.map((module) => (
