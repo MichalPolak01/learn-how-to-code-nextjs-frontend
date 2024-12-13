@@ -102,3 +102,9 @@ interface Stats {
   quiz_score_percentage: number;
   lesson_count: number;
 }
+
+interface EnrolledStats {
+  course_id: number;
+  course_name: string;
+  users_progress: Stats[];
+}

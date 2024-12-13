@@ -14,7 +14,7 @@ const COURSE_URL = "/api/course";
 export default function CoursesPage() {
     const searchParams = useSearchParams();
     const filter = searchParams.get("filter");
-    const [activeFilter, setActiveFilter] = useState<string>(filter? filter : "");
+    const [activeFilter, setActiveFilter] = useState<string>(filter? filter : "enrolled");
     const [courses, setCourses] = useState<CoursePreview[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 

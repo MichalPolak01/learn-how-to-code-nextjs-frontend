@@ -12,8 +12,6 @@ import {Navbar} from "@/components/navbar";
 import { AuthProvider } from "@/providers/authProvider";
 
 
-
-
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -51,7 +49,7 @@ export default function RootLayout({
               <div className="relative flex flex-col h-screen">
               <AuthProvider>
                 <Navbar />
-                <main className="container mx-auto max-w-7xl pt-4 px-6 flex-grow">
+                <main className="container mx-auto max-w-7xl pt-4 sm:px-6 px-2 flex-grow">
                   {children}
 
                   <Toaster

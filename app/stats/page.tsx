@@ -6,6 +6,7 @@ import React, { Key, useState } from "react";
 
 import { useAuth } from "@/providers/authProvider";
 import OverallStats from "@/components/stats/overall";
+import CoursesStats from "@/components/stats/courses";
 
 
 export default function Page() {
@@ -36,7 +37,7 @@ export default function Page() {
                 <OverallStats />
               </Tab>
               <Tab key="course" title="Statystyki kursów">
-                {/* <ChangePassword /> */}
+                <CoursesStats />
               </Tab>
               <Tab key="lessons" title="Statystyki lekcji">
                 {/* <ChangePassword /> */}

@@ -2,7 +2,6 @@
 
 import React, { FormEvent, useEffect, useState } from "react";
 import { Button } from "@nextui-org/button";
-import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Input } from "@nextui-org/input";
 import {  Mail, UserRound } from "lucide-react";
 

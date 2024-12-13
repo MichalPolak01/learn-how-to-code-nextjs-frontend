@@ -15,8 +15,8 @@ export default function FilterCarousel({
     const auth = useAuth();
 
     const options = [
-        { filter: "", icon: ScrollText, text: "Wszystkie" },
         { filter: "enrolled", icon: Bookmark, text: "Zapisane" },
+        { filter: "", icon: ScrollText, text: "Wszystkie" },
         { filter: "most-popular", icon: ChartSpline, text: "Najpopularniejsze" },
         { filter: "highest-rated", icon: Trophy, text: "Najwyżej oceniane" },
         { filter: "latest", icon: Clock3, text: "Najnowsze" },

@@ -46,7 +46,7 @@ export default function Home() {
 
     return (
         <div>
-            <div className="relative h-[32svh] w-full sm:py-8 py-3 sm:px-16 px-0 rounded-2xl overflow-hidden flex flex-col justify-between">
+            <div className="relative h-[24rem] w-full sm:py-8 py-3 sm:px-16 px-0 rounded-2xl overflow-hidden flex flex-col justify-between">
                 <Image 
                     alt="Home background" 
                     className="absolute inset-0 object-cover w-full h-full blur-sm" 
@@ -73,7 +73,7 @@ export default function Home() {
                                 <h4 className='text-2xl text-success font-bold'>
                                 <CountUp duration={5} end={coursesStats?.courses_count || 0} start={0} />
                                 </h4>
-                                <h5 className='text-sm uppercase font-light text-white'>Kursów</h5>
+                                <h5 className='text-sm uppercase font-light text-white text-center'>Unikatowych<br/>Kursów</h5>
                             </div>
                             <Divider className='bg-white' orientation='vertical' />
                             <div className='flex flex-col  items-center'>
