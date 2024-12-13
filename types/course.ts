@@ -77,3 +77,8 @@ interface CourseStats {
   students_count: number;
   completed_lessons: number;
 }
+
+interface EvaluatedAssignment {
+  assignment_score: number;
+  message: string;
+}

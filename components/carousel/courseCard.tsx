@@ -66,7 +66,7 @@ export default function CourseCard({ course }: CardProps) {
                             <div className="flex flex-row gap-1 justify-center items-center">
                                 <FileSpreadsheet />
                                 <p className="font-bold text-large">
-                                    {course.student_count}
+                                    {course.lesson_count}
                                 </p>
                             </div>
                             <div className="mt-2 flex flex-row gap-1 justify-center items-center">
