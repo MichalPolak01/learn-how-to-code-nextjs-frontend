@@ -44,7 +44,9 @@ interface Option {
   
   interface Course {
     id: string;
+    author: Author;
     creator_state: string;
+    last_updated: string;
     name: string;
     description: string;
     is_public: boolean;
@@ -76,6 +78,14 @@ interface CourseStats {
   courses_count: number;
   students_count: number;
   completed_lessons: number;
+}
+
+interface LessonStat {
+  lesson_id: string;
+  introduction_completed: boolean;
+  quiz_score: number | null;
+  assignment_score: number | null;
+  lesson_completed: boolean;
 }
 
 interface EvaluatedAssignment {

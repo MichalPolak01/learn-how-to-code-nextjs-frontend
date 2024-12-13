@@ -17,7 +17,7 @@ interface ChartData {
       {
         name: "Lekcje ukończone",
         value: currentUserStats.completed_lessons / currentUserStats.lesson_count *100,
-        fill: "hsl(var(--nextui-primary))",
+        fill: "hsl(var(--nextui-success))",
       },
       {
         name: "Średnia ocen z zadań",
@@ -66,6 +66,7 @@ interface ChartData {
               </RadialBar>
               <text
                 className="text-center font-bold text-xs"
+                style={{ fill: "hsl(var(--nextui-default-700))" }}
                 textAnchor="middle"
                 x="50%"
                 y="50%"
