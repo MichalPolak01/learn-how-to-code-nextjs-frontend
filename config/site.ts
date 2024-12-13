@@ -19,6 +19,16 @@ export const siteConfig = {
       href: "/quizzes/wizard",
       authRequired: true
     },
+    // {
+    //   label: "Stwórz quiz",
+    //   href: "/course-wizard",
+    //   authRequired: true
+    // },
+    {
+      label: "Statystyki",
+      href: "/stats",
+      authRequired: true
+    }
   ],
   navTeacherItems: [
     {
@@ -36,6 +46,11 @@ export const siteConfig = {
       href: "/teacher/course/wizard",
       authRequired: true
     },
+    {
+      label: "Statystyki",
+      href: "/stats",
+      authRequired: true
+    }
   ],
   navMenuItems: [
     {

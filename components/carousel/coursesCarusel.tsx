@@ -20,6 +20,7 @@ const COURSE_URL = "/api/teacher/course";
 
 export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
   const [courses, setCourses] = useState<CoursePreview[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const auth = useAuth();
 
@@ -71,6 +72,7 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      setLoading(true);
       const query = new URLSearchParams({
         limit: "5",
         ...(sortBy && { sortBy: sortBy })
@@ -92,6 +94,8 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
       } else {
         showToast("Nie udało się wczytać kursów.", true);
       }
+
+      setLoading(false);
     };
 
     fetchCourses();
@@ -99,7 +103,7 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
 
 
   return (
-    <div className="pt-20" id={sortBy}>
+    <div className="pt-16" id={sortBy}>
       <div className="flex md:flex-row gap-2 flex-col items-center justify-center relative">
         <div className="flex-1" />
         <h2 className="text-2xl text-primary-500 font-semibold text-center">
@@ -122,17 +126,18 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="absolute left-0 top-8 h-[16rem] w-40 bg-gradient-to-r from-default-100 to-transparent z-10 pointer-events-none md:visible invisible" />
-        <div className="absolute right-0 top-8 h-[16rem] w-40 bg-gradient-to-r from-transparent to-default-100 z-10 pointer-events-none md:visible invisible" />
+
+        <div className="absolute left-0 top-6 xl:h-[17rem] md:h-[16rem] sm:h=[14rem] h-[20rem] md:w-40 w-10 bg-gradient-to-r from-default-50 to-transparent z-10 pointer-events-none md:visible invisible" />
+        <div className="absolute right-0 top-6 xl:h-[17rem] md:h-[16rem] sm:h=[14rem] h-[20rem] md:w-40 w-10 bg-gradient-to-r from-transparent to-default-50 z-10 pointer-events-none md:visible invisible" />
 
         <div ref={emblaRef} className="embla__viewport w-full">
-          <div className="embla__container flex items-center gap-4">
+          <div className="embla__container flex items-center gap-1">
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="embla__slide px-2 md:py-8 py-4 md:flex-[0_0_40%] flex-[0_0_70%] md:px-4"
+                className="embla__slide px-0 sm:py-6 py-1 sm:flex-[0_0_40%] flex-[0_0_70%] sm:px-4"
               >
-                <CourseCard course={course} />
+                <CourseCard course={course} loading={loading} />
               </div>
             ))}
           </div>

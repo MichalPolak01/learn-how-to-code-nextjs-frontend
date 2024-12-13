@@ -16,9 +16,13 @@ export default function CoursesPage() {
     const filter = searchParams.get("filter");
     const [activeFilter, setActiveFilter] = useState<string>(filter? filter : "");
     const [courses, setCourses] = useState<CoursePreview[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
     const auth = useAuth();
 
     const fetchCourses = async (filter: string) => {
+        setLoading(true);
+        setCourses([]);
         const query = new URLSearchParams({
             ...(filter && { sortBy: filter })
         });
@@ -39,6 +43,8 @@ export default function CoursesPage() {
         } else {
             showToast("Nie udało się wczytać kursów.", true);
         }
+
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -48,13 +54,13 @@ export default function CoursesPage() {
     return (
         <>
             <FilterCarousel activeFilter={activeFilter} onFilterChange={setActiveFilter} />
-            <div className="flex flex-row flex-wrap gap-2 justify-center">
+            <div className="flex flex-row flex-wrap gap-2 justify-center mt-4">
                 {courses.map((course) => (
                     <div
                         key={course.id}
-                        className="embla__slide px-2 md:py-8 py-4 md:flex-[0_0_40%] flex-[0_0_70%] md:px-4"
+                        className="px-2 sm:py-4 py-1 md:px-4"
                     >
-                        <CourseCard course={course} />
+                        <CourseCard course={course} loading={loading} />
                     </div>
                 ))}
             </div>

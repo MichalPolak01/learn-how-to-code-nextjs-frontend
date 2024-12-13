@@ -1,6 +1,6 @@
 "use client"
 
-import { ChartSpline, Clock3, ScrollText, Trophy, PencilLine } from "lucide-react";
+import { ChartSpline, Clock3, ScrollText, Trophy, PencilLine, Bookmark } from "lucide-react";
 
 import { useAuth } from "@/providers/authProvider";
 
@@ -16,6 +16,7 @@ export default function FilterCarousel({
 
     const options = [
         { filter: "", icon: ScrollText, text: "Wszystkie" },
+        { filter: "enrolled", icon: Bookmark, text: "Zapisane" },
         { filter: "most-popular", icon: ChartSpline, text: "Najpopularniejsze" },
         { filter: "highest-rated", icon: Trophy, text: "Najwyżej oceniane" },
         { filter: "latest", icon: Clock3, text: "Najnowsze" },

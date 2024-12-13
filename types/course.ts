@@ -77,3 +77,18 @@ interface CourseStats {
   students_count: number;
   completed_lessons: number;
 }
+
+interface EvaluatedAssignment {
+  assignment_score: number;
+  message: string;
+}
+
+interface Stats {
+  username: string;
+  completed_lessons: number;
+  started_assignments: number;
+  started_quizzes: number;
+  assignment_score_percentage: number;
+  quiz_score_percentage: number;
+  lesson_count: number;
+}
