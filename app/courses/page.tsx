@@ -8,7 +8,7 @@ import { showToast } from "@/lib/showToast";
 import { useAuth } from "@/providers/authProvider";
 import CourseCard from "@/components/carousel/courseCard";
 
-const COURSE_URL = "/api/teacher/course";
+const COURSE_URL = "/api/course";
 
 
 export default function CoursesPage() {
@@ -22,6 +22,7 @@ export default function CoursesPage() {
 
     const fetchCourses = async (filter: string) => {
         setLoading(true);
+
         setCourses([]);
         const query = new URLSearchParams({
             ...(filter && { sortBy: filter })

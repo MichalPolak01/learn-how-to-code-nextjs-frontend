@@ -10,13 +10,8 @@ export const siteConfig = {
       authRequired: true
     },
     {
-      label: "Quizy",
-      href: "/quizzes",
-      authRequired: true
-    },
-    {
-      label: "Stwórz quiz",
-      href: "/quizzes/wizard",
+      label: "Kursy",
+      href: "/courses",
       authRequired: true
     },
     // {
@@ -43,7 +38,7 @@ export const siteConfig = {
     },
     {
       label: "Stwórz kurs",
-      href: "/teacher/course/wizard",
+      href: "/course-wizard",
       authRequired: true
     },
     {
@@ -65,7 +60,7 @@ export const siteConfig = {
     },
     {
       label: "Stwórz quiz",
-      href: "/quizzes/wizard",
+      href: "/course-wizard",
       authRequired: true
     },
     {

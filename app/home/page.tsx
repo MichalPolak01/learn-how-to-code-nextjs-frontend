@@ -13,7 +13,7 @@ import CarouselOptions from '@/components/carousel/caruselOptions';
 import { showToast } from '@/lib/showToast';
 
 
-const COURSES_STATS_URL = "/api/teacher/course/stats";
+const COURSES_STATS_URL = "/api/course/stats";
 
 export default function Home() {
     const [coursesStats, setCoursesStats] = useState<CourseStats>();

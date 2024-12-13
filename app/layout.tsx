@@ -47,11 +47,13 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-            <AuthProvider>
+
               <div className="relative flex flex-col h-screen">
+              <AuthProvider>
                 <Navbar />
                 <main className="container mx-auto max-w-7xl pt-4 px-6 flex-grow">
                   {children}
+
                   <Toaster
                     position="bottom-right"
                     reverseOrder={false}
@@ -69,8 +71,9 @@ export default function RootLayout({
                     <p className="text-primary">NextUI</p>
                   </Link>
                 </footer>
+                </AuthProvider>
               </div>
-          </AuthProvider>
+
         </Providers>
       </body>
     </html>

@@ -9,6 +9,8 @@ const protectedRoutes = {
     "/account-settings": ['USER', 'TEACHER'],
     "/change-password": ['USER', 'TEACHER'],
     "/home": ['USER', 'TEACHER'],
+    "/courses": ["USER", "TEACHER"],
+    "/course-wizard": ['TEACHER']
 };
 
 const publicRoutes = ['/login', '/register'];

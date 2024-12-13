@@ -15,7 +15,7 @@ export default function CarouselOptions() {
         <div className="flex flex-row flex-wrap justify-center gap-3 py-5 mt-5">
             {auth.role === "TEACHER" && 
                 <>
-                    <OptionCard color="primary" href="teacher/course/wizard" icon={BadgePlus} text="Dodaj kurs" />
+                    <OptionCard color="primary" href="course-wizard" icon={BadgePlus} text="Dodaj kurs" />
                     <OptionCard color="default-800" href="#my" icon={PencilLine} text="Moje kursy" />
                 </>
             }
