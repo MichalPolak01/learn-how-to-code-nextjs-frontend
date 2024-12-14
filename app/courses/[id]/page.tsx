@@ -166,7 +166,7 @@ export default function Course({ params }: { params: { id: string } }) {
 
   return (
     <div className="flex lg:flex-row flex-col gap-4 mt-6 lg:h-[85svh]">
-      <Card className="flex-1 p-8 h-full overflow-y-auto flex flex-col justify-between">
+      <Card className="p-8 h-full overflow-y-auto flex flex-col justify-between">
         <div>
           <h1 className="text-3xl font-bold text-primary-500">{course?.name}</h1>
           <p className="text-lg text-default-600">{course?.description}</p>
@@ -202,7 +202,9 @@ export default function Course({ params }: { params: { id: string } }) {
 
         <div>
           <p className="mt-8 text-lg text-default-600"><span className="font-bold">Autor: </span>{course?.author?.username}</p>
-          <p className="text-lg text-default-600"><span className="font-bold">Ostatnia aktualizacja: </span>{new Date(course.last_updated).toLocaleString()}</p>
+          {course.last_updated &&
+            <p className="text-lg text-default-600"><span className="font-bold">Ostatnia aktualizacja: </span>{new Date(course.last_updated).toLocaleString()}</p>
+          }
           {course?.author?.username === auth.username &&
             <Button
               className="mt-4 hover:scale-110"
@@ -222,7 +224,7 @@ export default function Course({ params }: { params: { id: string } }) {
         </div>
 
       </Card>
-      <Card className={`flex-2 p-8 h-full scrollable-card ${course?.modules && course.modules.length > 0 ? "visible" : "invisible"}`}>
+      <Card className={`sm:min-w-[41rem] p-8 h-full scrollable-card ${course?.modules && course.modules.length > 0 ? "visible" : "invisible"}`}>
         {course?.modules.map((module) => (
           <div key={module.id} className="mb-6 border border-default-200 rounded-lg p-4">
             <h2 className="text-xl font-semibold text-primary-600 mb-4">{module.name}</h2>

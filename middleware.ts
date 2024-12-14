@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes = {
-    "/": ['USER', 'TEACHER'],
+    // "/": ['USER', 'TEACHER'],
     "/account-settings": ['USER', 'TEACHER'],
     "/change-password": ['USER', 'TEACHER'],
     "/home": ['USER', 'TEACHER'],
@@ -13,7 +13,7 @@ const protectedRoutes = {
     "/course-wizard": ['TEACHER']
 };
 
-const publicRoutes = ['/login', '/register'];
+const publicRoutes = ['/', '/login', '/register'];
 
 function isTokenExpired(token: string): boolean {
     try {
@@ -35,7 +35,7 @@ export default async function middleware(request:NextRequest) {
     const isAuthenticated = token && !isTokenExpired(token);
     
     if (isPublicRoute && isAuthenticated) {
-        return NextResponse.redirect(new URL("/", request.nextUrl));
+        return NextResponse.redirect(new URL("/home", request.nextUrl));
     }
 
     if (isProtectedRoute) {

@@ -21,6 +21,7 @@ const COURSE_URL = "/api/course";
 
 export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
   const [courses, setCourses] = useState<CoursePreview[]>([]);
+  const [isEnrolled, setIsEnrolled] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const auth = useAuth();
@@ -98,7 +99,28 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
       setLoading(false);
     };
 
+    const checkIsEnrolled = async () => {
+
+      const response = await fetch(`${COURSE_URL}/0/enroll`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+
+      if (response.ok) {
+          const data: number[] = await response.json();
+
+          setIsEnrolled(data)
+      } else if (response.status == 401) {
+          auth.loginRequired();
+      } else {
+          // Do nothing
+      }
+  }
+
     fetchCourses();
+    checkIsEnrolled();
   }, [sortBy]);
 
   return (
@@ -144,7 +166,7 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
                 key={course.id}
                 className="embla__slide px-0 sm:py-6 py-1 sm:flex-[0_0_40%] flex-[0_0_70%] sm:px-4"
               >
-                <CourseCard course={course} loading={loading} />
+                <CourseCard course={course} isEnrolled={isEnrolled.includes(Number(course.id))} />
               </div>
             ))}
           </div>

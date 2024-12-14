@@ -137,6 +137,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
   useEffect(() => {
     const loadCourse = async () => {
       if (!courseId) return;
+      setLoading(true);
 
       try {
         const response = await fetch(`${COURSE_URL}/${courseId}`, {
@@ -181,6 +182,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         router.push("/course-wizard");
 
         return;
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -415,8 +418,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     }
 
     try {
-      setLoading(true);
       for (const module of courseData.modules) {
+        setLoading(true);
         if (module.lessons.length === 0) {
           setValidationMessage(`Moduł ${module.name} nie zawiera lekcji.`);
           setIsErrorOpen(true);

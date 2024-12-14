@@ -16,11 +16,11 @@ const IS_ENROLLED_URL = "/api/course"
 
 interface CardProps {
   course: CoursePreview;
-  loading: boolean;
+  isEnrolled: boolean
 }
 
-export default function CourseCard({ course }: CardProps) {
-  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
+export default function CourseCard({ course, isEnrolled }: CardProps) {
+  // const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const auth = useAuth();
   const router = useRouter();
 
@@ -32,30 +32,30 @@ export default function CourseCard({ course }: CardProps) {
     router.push(`/course-wizard/${course?.id}`);
   };
 
-  useEffect(() => {
-    const checkIsEnrolled = async () => {
+  // useEffect(() => {
+  //   const checkIsEnrolled = async () => {
 
-      const response = await fetch(`${IS_ENROLLED_URL}/${course.id}/enroll`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  //     const response = await fetch(`${IS_ENROLLED_URL}/${course.id}/enroll`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      if (response.ok) {
-        const data = await response.json();
+  //     if (response.ok) {
+  //       const data = await response.json();
 
-        setIsEnrolled(data.is_enrolled)
-      } else if (response.status == 401) {
-        auth.loginRequired();
-      } else {
-        // Do nothing
-      }
-    }
+  //       setIsEnrolled(data.is_enrolled)
+  //     } else if (response.status == 401) {
+  //       auth.loginRequired();
+  //     } else {
+  //       // Do nothing
+  //     }
+  //   }
 
-    checkIsEnrolled();
+  //   checkIsEnrolled();
 
-  }, [course, auth]);
+  // }, [course, auth]);
 
   return (
     <Card className="xl:w-[35rem] xl:h-[17rem] md:h-[16rem] sm:h-[14rem] h-[20rem] sm:w-[30rem] w-full sm:scale-100 scale-90">

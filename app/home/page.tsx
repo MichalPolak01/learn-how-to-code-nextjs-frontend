@@ -6,6 +6,7 @@ import { Divider } from '@nextui-org/divider';
 import CountUp from 'react-countup';
 import { Button } from '@nextui-org/button';
 import { ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/providers/authProvider';
 import CourseCarusel from '@/components/carousel/coursesCarusel';
@@ -19,6 +20,7 @@ export default function Home() {
     const [coursesStats, setCoursesStats] = useState<CourseStats>();
 
     const auth = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -104,12 +106,11 @@ export default function Home() {
             <CourseCarusel sortBy='latest' title='Najnowsze' />
 
             <div className='flex justify-center pt-24 pb-8'>
-                <Button className='hover:scale-110' color='primary' radius='full' size="lg" variant='shadow' onClick={() => "click"}>
+                <Button className='hover:scale-110' color='primary' radius='full' size="lg" variant='shadow' onClick={() => router.push(`/courses`)}>
                     Zobacz wszytkie kursy
                     <ChevronRight />
                 </Button>
             </div>
-
         </div>
     )
 }

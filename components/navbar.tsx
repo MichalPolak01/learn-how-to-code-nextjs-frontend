@@ -32,7 +32,7 @@ export const Navbar = () => {
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Logo className="text-primary-500" />
-            <p className="font-bold text-inherit text-primary-500">QuizzApp</p>
+            <p className="font-bold text-inherit text-primary-500">LearnHowToCode</p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden sm:flex gap-4 justify-start ml-2">

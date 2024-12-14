@@ -15,8 +15,9 @@ const COURSE_URL = "/api/course";
 export default function CoursesPage() {
     const searchParams = useSearchParams();
     const filter = searchParams.get("filter");
-    const [activeFilter, setActiveFilter] = useState<string>(filter? filter : "enrolled");
+    const [activeFilter, setActiveFilter] = useState<string>(filter ? filter : "enrolled");
     const [courses, setCourses] = useState<CoursePreview[]>([]);
+    const [isEnrolled, setIsEnrolled] = useState<number[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
     const auth = useAuth();
@@ -49,8 +50,29 @@ export default function CoursesPage() {
         setLoading(false);
     };
 
+    const checkIsEnrolled = async () => {
+
+        const response = await fetch(`${COURSE_URL}/0/enroll`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.ok) {
+            const data: number[] = await response.json();
+
+            setIsEnrolled(data)
+        } else if (response.status == 401) {
+            auth.loginRequired();
+        } else {
+            // Do nothing
+        }
+    }
+
     useEffect(() => {
         fetchCourses(activeFilter);
+        checkIsEnrolled();
     }, [activeFilter]);
 
     return (
@@ -63,14 +85,15 @@ export default function CoursesPage() {
                 </div>
             }
             <div className="flex flex-row flex-wrap gap-2 justify-center mt-4">
-                {courses.map((course) => (
-                    <div
-                        key={course.id}
-                        className="px-2 sm:py-4 py-1 md:px-4"
-                    >
-                        <CourseCard course={course} loading={loading} />
-                    </div>
-                ))}
+                {courses.map((course) => {
+                    const enrolled = isEnrolled.includes(Number(course.id));
+
+                    return (
+                        <div key={course.id} className="px-2 sm:py-4 py-1 md:px-4">
+                            <CourseCard course={course} isEnrolled={enrolled} />
+                        </div>
+                    )
+                })}
             </div>
         </>
     );
