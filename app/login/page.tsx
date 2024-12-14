@@ -90,6 +90,7 @@ export default function Page() {
                 </CardHeader>
                 <CardBody className="overflow-visible flex flex-col gap-4 mt-2">
                 <Input
+                    autoComplete="email"
                     color="default"
                     errorMessage="Sprawdź podany adres email!"
                     isInvalid={loginError}
@@ -107,6 +108,7 @@ export default function Page() {
                     onChange={handleChange}
                     />
                 <Input
+                    autoComplete="password"
                     color="default"
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibility}>

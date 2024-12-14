@@ -35,6 +35,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     is_public: false,
     creator_state: "details",
     modules: [],
+    author: null,
+    last_updated: null
   });
 
   const [courseDataError, setCourseDataError] = useState({
@@ -52,6 +54,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
   const formattedCourse = (data: any): Course => {
     return {
+      author: null,
+      last_updated: null,
       id: data.id,
       name: data.name || "Nieznany kurs",
       description: data.description || "Brak opisu",

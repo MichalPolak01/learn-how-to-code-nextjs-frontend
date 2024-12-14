@@ -44,9 +44,9 @@ interface Option {
   
   interface Course {
     id: string;
-    author: Author;
+    author: Author | null;
     creator_state: string;
-    last_updated: string;
+    last_updated: string | null;
     name: string;
     description: string;
     is_public: boolean;

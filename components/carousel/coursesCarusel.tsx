@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { Spinner } from '@nextui-org/spinner';
 
 import CourseCard from './courseCard';
 
@@ -69,7 +70,6 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
     emblaApi?.scrollNext();
   };
 
-
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
@@ -101,7 +101,6 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
     fetchCourses();
   }, [sortBy]);
 
-
   return (
     <div className="pt-16" id={sortBy}>
       <div className="flex md:flex-row gap-2 flex-col items-center justify-center relative">
@@ -110,12 +109,12 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
           {title}
         </h2>
         <div className='flex-1 flex justify-end flex-row items-center'>
-          <Link 
-            className="underline text-default-500 hover:text-default-800 hover:scale-105" 
-            href={`/courses?filter=${sortBy}`} 
+          <Link
+            className="underline text-default-500 hover:text-default-800 hover:scale-105"
+            href={`/courses?filter=${sortBy}`}
             title="Zobacz wszystkie"
           >
-            Zobacz wszystkie 
+            Zobacz wszystkie
           </Link>
           <ChevronRight />
         </div>
@@ -130,8 +129,16 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
         <div className="absolute left-0 top-6 xl:h-[17rem] md:h-[16rem] sm:h=[14rem] h-[20rem] md:w-40 w-10 bg-gradient-to-r from-default-50 to-transparent z-10 pointer-events-none md:visible invisible" />
         <div className="absolute right-0 top-6 xl:h-[17rem] md:h-[16rem] sm:h=[14rem] h-[20rem] md:w-40 w-10 bg-gradient-to-r from-transparent to-default-50 z-10 pointer-events-none md:visible invisible" />
 
+        {loading &&
+          <div className="h-[17rem] flex flex-row gap-4 justify-center items-center">
+            <Spinner />
+            <p className="text-md">Loading courses...</p>
+          </div>
+        }
+
         <div ref={emblaRef} className="embla__viewport w-full">
           <div className="embla__container flex items-center gap-1">
+
             {courses.map((course) => (
               <div
                 key={course.id}

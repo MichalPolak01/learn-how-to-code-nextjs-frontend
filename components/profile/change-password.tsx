@@ -51,18 +51,18 @@ export default function ChangePassword() {
                 },
                 body: JSON.stringify(formData)
             };
-    
+
             const response = await fetch(CHANGE_PASSWORD_URL, requestOptions);
-    
+
             interface RegisterResponse {
                 message?: string;
             }
             let data: RegisterResponse = {};
-    
+
             try {
                 data = await response.json();
             } catch { }
-    
+
             if (response.status == 200) {
                 setPasswordChangeError(2);
                 setPasswordChangeMessage("Hasło zostało zmienione.");
@@ -80,7 +80,7 @@ export default function ChangePassword() {
                 } else {
                     setPasswordChangeMessage("Podczas zmiany hasła wystąpił nieoczekiwany błąd. Spróbuj ponownie później.");
                 }
-                
+
                 showToast(true);
             } else if (response.status == 401) {
                 auth.loginRequired();
@@ -94,15 +94,15 @@ export default function ChangePassword() {
     }
 
     const showToast = async (isError: boolean) => {
-        toast(isError? 'Wystąpił błąd podczas zmiany hasła!': 'Aktualizacja hasła zakończona sukcesem!',
+        toast(isError ? 'Wystąpił błąd podczas zmiany hasła!' : 'Aktualizacja hasła zakończona sukcesem!',
             {
-                icon: isError? '☹️' : '🔐',
+                icon: isError ? '☹️' : '🔐',
                 style: {
-                borderRadius: '16px',
-                textAlign: "center",
-                padding: '16px',
-                background: isError? "#F31260" : "#006FEE",
-                color: '#fff',
+                    borderRadius: '16px',
+                    textAlign: "center",
+                    padding: '16px',
+                    background: isError ? "#F31260" : "#006FEE",
+                    color: '#fff',
                 },
             }
         );
@@ -110,7 +110,7 @@ export default function ChangePassword() {
 
     const isInvalidPassword = React.useMemo(() => {
         if (formData.new_password === "") return false;
-    
+
         return validatePassword(formData.new_password) ? false : true;
     }, [formData.new_password]);
 
@@ -133,17 +133,23 @@ export default function ChangePassword() {
     return (
         <div className="py-4">
             <h1 className="text-primary text-2xl font-semibold mb-2">Zmiana hasła</h1>
-            <p className={`${passwordChangeError == 1 ? "text-danger-500": passwordChangeError == 2 ? "text-success-500" : "text-default-600"}`}>{passwordChangeMessage}</p>
+            <p className={`${passwordChangeError == 1 ? "text-danger-500" : passwordChangeError == 2 ? "text-success-500" : "text-default-600"}`}>{passwordChangeMessage}</p>
             <form className="overflow-visible flex flex-col gap-3 mt-6" onSubmit={handleSubmit}>
+                 <Input
+                    autoComplete="username"
+                    className="invisible h-0"
+                    color="default"
+                />
                 <Input
+                    autoComplete="current-password"
                     color="default"
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibilityOldPassword}>
-                        {isOldPasswordVisible ? (
-                            <EyeOff className={`text-2xl pointer-events-none ${isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`} />
-                        ) : (
-                            <Eye className={`text-2xl pointer-events-none ${isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`} />
-                        )}
+                            {isOldPasswordVisible ? (
+                                <EyeOff className={`text-2xl pointer-events-none ${isOldPasswordInvalid ? "text-danger-400" : "text-default-400"}`} />
+                            ) : (
+                                <Eye className={`text-2xl pointer-events-none ${isOldPasswordInvalid ? "text-danger-400" : "text-default-400"}`} />
+                            )}
                         </button>
                     }
                     errorMessage="Podane hasło jest niepoprawne."
@@ -155,21 +161,22 @@ export default function ChangePassword() {
                     placeholder="Hasło"
                     size="md"
                     startContent={
-                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`}/>
+                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isOldPasswordInvalid ? "text-danger-400" : "text-default-400"}`} />
                     }
                     type={isOldPasswordVisible ? "text" : "password"}
                     value={formData.old_password}
                     onChange={handleChange}
-                    />
+                />
                 <Input
+                    autoComplete="new-password"
                     color="default"
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibilityNewPassword}>
-                        {isNewPasswordVisible ? (
-                            <EyeOff className={`text-2xl pointer-events-none ${isInvalidPassword || isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`} />
-                        ) : (
-                            <Eye className={`text-2xl pointer-events-none ${isInvalidPassword || isOldPasswordInvalid? "text-danger-400" :"text-default-400"}`} />
-                        )}
+                            {isNewPasswordVisible ? (
+                                <EyeOff className={`text-2xl pointer-events-none ${isInvalidPassword || isOldPasswordInvalid ? "text-danger-400" : "text-default-400"}`} />
+                            ) : (
+                                <Eye className={`text-2xl pointer-events-none ${isInvalidPassword || isOldPasswordInvalid ? "text-danger-400" : "text-default-400"}`} />
+                            )}
                         </button>
                     }
                     errorMessage="Hasło musi posiadać co najmniej 8 znaków, w tym 1 małą literę, 1 dużą literę, cyfrę oraz znak specjalny."
@@ -181,21 +188,22 @@ export default function ChangePassword() {
                     placeholder="Nowe hasło"
                     size="md"
                     startContent={
-                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidPassword || isNewPasswordsInvalid ? "text-danger-400" :"text-default-400"}`}/>
+                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidPassword || isNewPasswordsInvalid ? "text-danger-400" : "text-default-400"}`} />
                     }
                     type={isNewPasswordVisible ? "text" : "password"}
                     value={formData.new_password}
                     onChange={handleChange}
                 />
                 <Input
+                    autoComplete="re-new-password"
                     color="default"
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibilityConfirmPassword}>
-                        {isConfirmPasswordVisible ? (
-                            <EyeOff className={`text-2xl pointer-events-none ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`} />
-                        ) : (
-                            <Eye className={`text-2xl pointer-events-none ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`} />
-                        )}
+                            {isConfirmPasswordVisible ? (
+                                <EyeOff className={`text-2xl pointer-events-none ${isInvalidConfirmPassword ? "text-danger-400" : "text-default-400"}`} />
+                            ) : (
+                                <Eye className={`text-2xl pointer-events-none ${isInvalidConfirmPassword ? "text-danger-400" : "text-default-400"}`} />
+                            )}
                         </button>
                     }
                     errorMessage="Hasła nie mogą się od siebie różnić!"
@@ -207,7 +215,7 @@ export default function ChangePassword() {
                     placeholder="Potwierdź nowe hasło"
                     size="md"
                     startContent={
-                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidConfirmPassword? "text-danger-400" :"text-default-400"}`}/>
+                        <LockKeyhole className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidConfirmPassword ? "text-danger-400" : "text-default-400"}`} />
                     }
                     type={isConfirmPasswordVisible ? "text" : "password"}
                     value={formData.confirm_password}
@@ -215,8 +223,8 @@ export default function ChangePassword() {
                 />
                 <Button className="w-full mt-4" color="primary" size="sm" type="submit" variant="shadow">
                     Zmień hasło
-                </Button> 
+                </Button>
             </form>
         </div>
-      );
+    );
 }

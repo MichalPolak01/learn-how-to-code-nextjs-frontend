@@ -29,6 +29,7 @@ export default function Page() {
           <CardBody className="overflow-hidden flex flex-col">
             <Tabs
               aria-label="Tabs form"
+              className="vertical-tabs"
               isVertical={false}
               selectedKey={selected}
               size="md"

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Spinner } from "@nextui-org/spinner";
 
 import FilterCarousel from "@/components/filterCarousel";
 import { showToast } from "@/lib/showToast";
@@ -55,6 +56,12 @@ export default function CoursesPage() {
     return (
         <>
             <FilterCarousel activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+            {loading &&
+                <div className="flex flex-row gap-4 h-full pb-80 justify-center items-center">
+                    <Spinner />
+                    <p className="text-md">Loading courses...</p>
+                </div>
+            }
             <div className="flex flex-row flex-wrap gap-2 justify-center mt-4">
                 {courses.map((course) => (
                     <div

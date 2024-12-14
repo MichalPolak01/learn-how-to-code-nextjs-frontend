@@ -133,6 +133,7 @@ export default function Page() {
                 </CardHeader>
                 <CardBody className="overflow-visible flex flex-col gap-4 mt-2">
                 <Input
+                    autoComplete="username"
                     color="default"
                     errorMessage="Nazwa użytkownika musi być unikalna!"
                     isInvalid={isUsernameInvalid}
@@ -150,6 +151,7 @@ export default function Page() {
                     onChange={handleChange}
                 />
                 <Input
+                    autoComplete="emial"
                     color="default"
                     errorMessage="Podany adres email jest niepoprawny!"
                     isInvalid={isInvalidEmail || isEmailInvalid}
@@ -167,6 +169,7 @@ export default function Page() {
                     onChange={handleChange}
                     />
                 <Input
+                    autoComplete="password"
                     color="default"
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibilityPassword}>
@@ -193,6 +196,7 @@ export default function Page() {
                     onChange={handleChange}
                     />
                 <Input
+                    autoComplete="re-password"
                     color="default"
                     endContent={
                         <button aria-label="toggle password visibility" className="focus:outline-none" type="button" onClick={toggleVisibilityConfirmPassword}>

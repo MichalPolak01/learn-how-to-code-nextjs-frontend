@@ -1,6 +1,6 @@
 "use client"
 
-import { BadgePlus, ChartSpline, Clock3, ScrollText, Trophy, PencilLine } from "lucide-react";
+import { BadgePlus, ChartSpline, Clock3, Trophy, PencilLine, BookmarkCheck } from "lucide-react";
 
 import OptionCard from "./optionCard";
 
@@ -22,7 +22,7 @@ export default function CarouselOptions() {
             <OptionCard color="default-800" href="#highest-rated" icon={Trophy} text="Najwyżej oceniane" />
             <OptionCard color="default-800" href="#most-popular" icon={ChartSpline} text="Najpopularniejsze" />
             <OptionCard color="default-800" href="#latest" icon={Clock3} text="Najnowsze" />
-            <OptionCard color="default-800" href="/courses" icon={ScrollText} text="Wszystkie" />
+            <OptionCard color="primary" href="/courses" icon={BookmarkCheck} text="Zapisane" />
     </div>
     )
 }

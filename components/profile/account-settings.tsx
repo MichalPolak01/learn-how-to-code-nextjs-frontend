@@ -3,7 +3,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
-import {  Mail, UserRound } from "lucide-react";
+import { Mail, UserRound } from "lucide-react";
 
 import { validateEmail } from "@/lib/formValidators";
 import { useAuth } from "@/providers/authProvider";
@@ -33,7 +33,7 @@ export default function Page() {
                     "Content-Type": "application/json",
                 }
             })
-            
+
             if (response.status == 401) {
                 auth.loginRequired();
             } else {
@@ -72,18 +72,18 @@ export default function Page() {
                 },
                 body: JSON.stringify(formData)
             };
-    
+
             const response = await fetch(ACCOUNT_SETTINGS_URL, requestOptions);
-    
+
             interface AccountUpdateResponse {
                 message?: string;
             }
             let data: AccountUpdateResponse = {};
-    
+
             try {
                 data = await response.json();
             } catch (error) { }
-    
+
             if (response.status == 200) {
                 setRegisterError(2);
                 setRegisterMessage("Dane użytkownika zostały pomyślnie zaktualizowane.");
@@ -101,7 +101,7 @@ export default function Page() {
                 } else {
                     setRegisterMessage("Podczas aktualizacji danych użytkownika wystąpił nieoczekiwany błąd. Spróbuj ponownie później.");
                 }
-                
+
                 showToast("Podczas aktualizacji danych użytkownika wystąpił nieoczekiwany błąd.", true);
             } else if (response.status == 401) {
                 auth.loginRequired();
@@ -116,9 +116,9 @@ export default function Page() {
     }
 
     const isInvalidEmail = React.useMemo(() => {
-      if (formData.email === "") return false;
-  
-      return validateEmail(formData.email) ? false : true;
+        if (formData.email === "") return false;
+
+        return validateEmail(formData.email) ? false : true;
     }, [formData.email]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,13 +129,14 @@ export default function Page() {
             [event.target.name]: event.target.value
         });
     }
-    
-  return (
-    <div className="py-4">
-        <h1 className="text-primary text-2xl font-semibold mb-2">Edytuj dane użytkownika</h1>
-        <p className={`${registerError == 1 ? "text-danger-500": registerError == 2 ? "text-success-500" : "text-default-600"}`}>{registerMessage}</p>
-        <form className="overflow-visible flex flex-col gap-3 mt-6" onSubmit={handleSubmit}>
+
+    return (
+        <div className="py-4">
+            <h1 className="text-primary text-2xl font-semibold mb-2">Edytuj dane użytkownika</h1>
+            <p className={`${registerError == 1 ? "text-danger-500" : registerError == 2 ? "text-success-500" : "text-default-600"}`}>{registerMessage}</p>
+            <form className="overflow-visible flex flex-col gap-3 mt-6" onSubmit={handleSubmit}>
                 <Input
+                    autoComplete="username"
                     color="default"
                     errorMessage="Nazwa użytkownika musi być unikalna!"
                     isInvalid={isUsernameInvalid}
@@ -146,13 +147,14 @@ export default function Page() {
                     placeholder="Nazwa"
                     size="md"
                     startContent={
-                        <UserRound className={`text-2xl  pointer-events-none flex-shrink-0 ${isUsernameInvalid? "text-danger-400" :"text-default-400"}`}/>
+                        <UserRound className={`text-2xl  pointer-events-none flex-shrink-0 ${isUsernameInvalid ? "text-danger-400" : "text-default-400"}`} />
                     }
                     type="text"
                     value={formData.username}
                     onChange={handleChange}
                 />
                 <Input
+                    autoComplete="email"
                     color="default"
                     errorMessage="Podany adres email jest niepoprawny!"
                     isInvalid={isInvalidEmail || isEmailInvalid}
@@ -163,13 +165,14 @@ export default function Page() {
                     placeholder="Email"
                     size="md"
                     startContent={
-                        <Mail className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidEmail || isEmailInvalid? "text-danger-400" :"text-default-400"}`}/>
+                        <Mail className={`text-2xl  pointer-events-none flex-shrink-0 ${isInvalidEmail || isEmailInvalid ? "text-danger-400" : "text-default-400"}`} />
                     }
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    />
+                />
                 <Input
+                    autoComplete="role"
                     color="default"
                     isDisabled={true}
                     label="Rola"
@@ -178,17 +181,17 @@ export default function Page() {
                     placeholder="Rola"
                     size="md"
                     startContent={
-                        <Mail className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                        <Mail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                     }
                     type="text"
                     value={formData.role}
                     onChange={handleChange}
                 />
 
-                    <Button className="w-full" color="default" size="md" type="submit" variant="shadow">
-                        Zapisz zmiany
-                    </Button> 
-        </form>
-    </div>
-  );
+                <Button className="w-full" color="default" size="md" type="submit" variant="shadow">
+                    Zapisz zmiany
+                </Button>
+            </form>
+        </div>
+    );
 }
