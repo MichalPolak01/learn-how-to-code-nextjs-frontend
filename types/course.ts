@@ -93,18 +93,32 @@ interface EvaluatedAssignment {
   message: string;
 }
 
-interface Stats {
-  username: string;
+interface ChartStats {
   completed_lessons: number;
-  started_assignments: number;
-  started_quizzes: number;
+  lesson_count: number;
   assignment_score_percentage: number;
   quiz_score_percentage: number;
-  lesson_count: number;
+}
+
+interface Stats extends ChartStats {
+  username: string;
+  started_assignments: number;
+  started_quizzes: number;
 }
 
 interface EnrolledStats {
   course_id: number;
   course_name: string;
   users_progress: Stats[];
+}
+
+interface LessonProgressStats extends ChartStats {
+  lesson_id: number;
+  lesson_topic: string;
+}
+
+interface CourseProgress {
+  course_id: number;
+  course_name: string;
+  lesson_progress: LessonProgressStats[]
 }

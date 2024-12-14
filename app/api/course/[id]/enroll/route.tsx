@@ -13,3 +13,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     return NextResponse.json(data, {status: status});
 }
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+    const {data, status} = await ApiProxy.get(`${DJANGO_API_COURSE_STATS_URL}${params.id}/is-enrolled`, true);
+
+    return NextResponse.json(data, {status: status});
+}

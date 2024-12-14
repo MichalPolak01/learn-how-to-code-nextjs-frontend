@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { Pagination } from "@nextui-org/pagination";
-import { ArrowDown01, ArrowDownAz, ArrowUp10, ArrowUpZa } from "lucide-react";
+import { ArrowDown10, ArrowDownAz, ArrowUp01, ArrowUpZa } from "lucide-react";
 import { Spinner } from "@nextui-org/spinner";
 
 import { useAuth } from "@/providers/authProvider";
@@ -14,8 +14,8 @@ interface StatsTableProps {
 
 export default function StatsTable({ courseStats, loading }: StatsTableProps) {
     const [page, setPage] = useState<number>(1);
-    const [sortKey, setSortKey] = useState<keyof Stats | null>(null);
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const [sortKey, setSortKey] = useState<keyof Stats | null>("completed_lessons");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const rowsPerPage = 10;
     const auth = useAuth();
 
@@ -90,34 +90,40 @@ export default function StatsTable({ courseStats, loading }: StatsTableProps) {
                         {sortKey === "username" && (sortOrder === "asc" ? <ArrowDownAz /> : <ArrowUpZa />)}
                     </div>
                 </TableColumn>
+                <TableColumn key="lesson_count" onClick={() => handleSort("lesson_count")}>
+                    <div className="flex items-center gap-1 cursor-pointer">
+                        Rozpoczęte lekcje
+                        {sortKey === "lesson_count" && (sortOrder === "asc" ? <ArrowUp01 /> : <ArrowDown10 />)}
+                    </div>
+                </TableColumn>
                 <TableColumn key="completed_lessons" onClick={() => handleSort("completed_lessons")}>
                     <div className="flex items-center gap-1 cursor-pointer">
-                        Ukończone lekcjie
-                        {sortKey === "completed_lessons" && (sortOrder === "asc" ? <ArrowDown01 /> : <ArrowUp10 />)}
+                        Ukończone lekcje
+                        {sortKey === "completed_lessons" && (sortOrder === "asc" ? <ArrowUp01 /> : <ArrowDown10 />)}
                     </div>
                 </TableColumn>
                 <TableColumn key="started_assignments" onClick={() => handleSort("started_assignments")}>
                     <div className="flex items-center gap-1 cursor-pointer">
-                        Rozpoczęte zadania
-                        {sortKey === "started_assignments" && (sortOrder === "asc" ? <ArrowDown01 /> : <ArrowUp10/>)}
+                        Wykonane zadania
+                        {sortKey === "started_assignments" && (sortOrder === "asc" ? <ArrowUp01 /> : <ArrowDown10 />)}
                     </div>
                 </TableColumn>
                 <TableColumn key="started_quizzes" onClick={() => handleSort("started_quizzes")}>
                     <div className="flex items-center gap-1 cursor-pointer">
-                        Rozpoczęte quizy
-                        {sortKey === "started_quizzes" && (sortOrder === "asc" ? <ArrowDown01 /> : <ArrowUp10/>)}
+                        Wykonane quizy
+                        {sortKey === "started_quizzes" && (sortOrder === "asc" ? <ArrowUp01 /> : <ArrowDown10 />)}
                     </div>
                 </TableColumn>
                 <TableColumn key="assignment_score_percentage" onClick={() => handleSort("assignment_score_percentage")}>
                     <div className="flex items-center gap-1 cursor-pointer">
                         Poprawność w zdaniach
-                        {sortKey === "assignment_score_percentage" && (sortOrder === "asc" ? <ArrowDown01 /> : <ArrowUp10/>)}
+                        {sortKey === "assignment_score_percentage" && (sortOrder === "asc" ? <ArrowUp01 /> : <ArrowDown10 />)}
                     </div>
                 </TableColumn>
                 <TableColumn key="quiz_score_percentage" onClick={() => handleSort("quiz_score_percentage")}>
                     <div className="flex items-center gap-1 cursor-pointer">
                         Poprawność w quizach
-                        {sortKey === "quiz_score_percentage" && (sortOrder === "asc" ? <ArrowDown01 /> : <ArrowUp10/>)}
+                        {sortKey === "quiz_score_percentage" && (sortOrder === "asc" ? <ArrowUp01 /> : <ArrowDown10 />)}
                     </div>
                 </TableColumn>
             </TableHeader>
@@ -128,6 +134,7 @@ export default function StatsTable({ courseStats, loading }: StatsTableProps) {
                         className={auth.username === item.username ? "bg-primary-50 text-primary" : ""}
                     >
                         <TableCell>{item.username}</TableCell>
+                        <TableCell>{item.lesson_count}</TableCell>
                         <TableCell>{item.completed_lessons}</TableCell>
                         <TableCell>{item.started_assignments}</TableCell>
                         <TableCell>{item.started_quizzes}</TableCell>

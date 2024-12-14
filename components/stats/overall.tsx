@@ -13,6 +13,7 @@ const STATS_URL = "/api/course/stats/overall"
 
 export default function OverallStats() {
     const [stats, setStats] = useState<Stats[]>([]);
+    const [currentStats, setCurrentStats] = useState<Stats | undefined>();
     const [loading, setLoading] = useState(false);
 
     const auth = useAuth();
@@ -27,29 +28,28 @@ export default function OverallStats() {
                     "Content-Type": "application/json",
                   },
                 });
-        
-                const stats = await response.json();
-        
+                
                 if (response.status === 401) {
                   auth.loginRequired();
                     
-                  setLoading(false);
-
                   return;
                 }
         
                 if (!response.ok) {
                   throw new Error("Response not ok.")
                 }
+
+                const stats: Stats[] = await response.json();
+                const currentStats = stats.find((stat) => stat.username === auth.username)
     
                 setStats(stats);
-                setLoading(false);
+                setCurrentStats(currentStats);
             } catch (error) {
                 showToast("Nie udało się pobrać statystyk.", true);
-    
-                setLoading(false);
-
+  
                 return;
+            } finally {
+              setLoading(false);
             }
         }
 
@@ -59,7 +59,11 @@ export default function OverallStats() {
     return (
         <div>
             <h2 className="text-primary font-semibold text-2xl my-4 ml-4">Twoje statystyki:</h2>
-            <StatsCharts stats={stats} username={auth.username} />
+            {currentStats ? (
+              <StatsCharts stats={currentStats} />
+            ) : (
+              <p className="ml-6 mb-8 text-light italic text-md">Brak statystyk. Kiedy ukończysz lekcję tu pojawią się twoeje statystyki.</p>
+            )}
 
             <h3 className="text-primary font-semibold text-xl my-4 ml-4">Ranking ogólny:</h3>
             <StatsTable courseStats={stats} loading={loading}/>

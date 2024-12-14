@@ -6,32 +6,26 @@ interface ChartData {
     fill: string;
   }
   
-  export default function StatsCharts({ stats, username }: { stats: Stats[], username: string }) {
-    const currentUserStats = stats.find((stat) => stat.username === username);
-
-    if (!currentUserStats) {
-        return <p className="ml-6 mb-8 text-light italic text-md">Brak statystyk. Kiedy ukończysz lekcję tu pojawią się twoeje statystyki.</p>
-    }
-  
+  export default function StatsCharts({ stats }: { stats: ChartStats }) {
     const chartData: ChartData[] = [
       {
         name: "Lekcje ukończone",
-        value: currentUserStats.completed_lessons / currentUserStats.lesson_count *100,
+        value: (stats.completed_lessons / stats.lesson_count *100) || 0.0,
         fill: "hsl(var(--nextui-success))",
       },
       {
         name: "Średnia ocen z zadań",
-        value: currentUserStats.assignment_score_percentage,
+        value: stats.assignment_score_percentage,
         fill: "hsl(var(--nextui-warning))",
       },
       {
         name: "Średnia ocen z quizów",
-        value: currentUserStats.quiz_score_percentage,
+        value: stats.quiz_score_percentage,
         fill: "hsl(var(--nextui-danger))",
       },
       {
         name: "Średnia wyników",
-        value: (currentUserStats.assignment_score_percentage + currentUserStats.quiz_score_percentage) / 2,
+        value: (stats.assignment_score_percentage + stats.quiz_score_percentage) / 2,
         fill: "hsl(var(--nextui-secondary))",
       },
     ];

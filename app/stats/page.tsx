@@ -7,6 +7,7 @@ import React, { Key, useState } from "react";
 import { useAuth } from "@/providers/authProvider";
 import OverallStats from "@/components/stats/overall";
 import CoursesStats from "@/components/stats/courses";
+import TeacherLessonStats from "@/components/stats/teacher-courses";
 
 
 export default function Page() {
@@ -40,7 +41,7 @@ export default function Page() {
                 <CoursesStats />
               </Tab>
               <Tab key="lessons" title="Statystyki lekcji">
-                {/* <ChangePassword /> */}
+                <TeacherLessonStats />
               </Tab>
             </Tabs>
           </CardBody>
