@@ -36,7 +36,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     creator_state: "details",
     modules: [],
     author: null,
-    last_updated: null
+    last_updated: null,
+    image: ""
   });
 
   const [courseDataError, setCourseDataError] = useState({
@@ -56,6 +57,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     return {
       author: null,
       last_updated: null,
+      image: data.image || "",
       id: data.id,
       name: data.name || "Nieznany kurs",
       description: data.description || "Brak opisu",
@@ -99,6 +101,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     return {
       id: course.id,
       name: course.name,
+      image: course.image,
       description: course.description,
       is_public: course.is_public,
       creator_state: nextState,
@@ -240,6 +243,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         body: JSON.stringify({
           name: courseData.name,
           description: courseData.description,
+          image: courseData.image,
           creator_state: nextState,
         }),
       });
@@ -315,6 +319,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: courseData.name,
+          image: courseData.image,
           is_public: courseData.is_public,
           description: courseData.description,
           creator_state: nextState,
@@ -633,7 +638,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
               <RowSteps
                 currentStep={createCoursePath.findIndex(
                   (step) => step.value === courseData.creator_state
-                ) + 1}
+                )}
                 steps={createCoursePath.map((item, index) => ({
                   title: `${index + 1}. ${item.label}`,
                 }))}
@@ -689,6 +694,15 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
               name="description"
               placeholder="Przedstaw swój kurs, aby zachęcić osby do udziału w nim."
               value={courseData.description}
+              onChange={handleCourseChange}
+            />
+            <Input
+              color={"default"}
+              label="Okładka kursu"
+              labelPlacement="outside"
+              name="image"
+              placeholder="Podaj link do okładki kursu"
+              value={courseData.image}
               onChange={handleCourseChange}
             />
 

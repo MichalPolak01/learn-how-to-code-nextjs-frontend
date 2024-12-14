@@ -32,39 +32,14 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
     router.push(`/course-wizard/${course?.id}`);
   };
 
-  // useEffect(() => {
-  //   const checkIsEnrolled = async () => {
-
-  //     const response = await fetch(`${IS_ENROLLED_URL}/${course.id}/enroll`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-
-  //       setIsEnrolled(data.is_enrolled)
-  //     } else if (response.status == 401) {
-  //       auth.loginRequired();
-  //     } else {
-  //       // Do nothing
-  //     }
-  //   }
-
-  //   checkIsEnrolled();
-
-  // }, [course, auth]);
-
   return (
-    <Card className="xl:w-[35rem] xl:h-[17rem] md:h-[16rem] sm:h-[14rem] h-[20rem] sm:w-[30rem] w-full sm:scale-100 scale-90">
+    <Card className="xl:w-[35rem] xl:h-[17rem] sm:h-[16rem] h-[20rem] sm:w-[30rem] w-full sm:scale-100 scale-90">
       <Link
-        className="pt-4 text-default-900 flex flex-col h-full cursor-pointer hover:bg-default-100"
+        className="md:pt-4 pt-6 text-default-900 flex flex-col h-full cursor-pointer hover:bg-default-100"
         onClick={handleCardClick}
       >
         {isEnrolled ?
-          <Chip className="absolute right-2 top-2 flex text-white italic" color="success" size="sm">
+          <Chip className="z-10 absolute right-2 top-2 flex text-white italic" color="success" size="sm">
             Rozpoczety
           </Chip>
           :
@@ -80,15 +55,15 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
             <Image
               isZoomed
               alt="Card image"
-              className="object-cover w-full h-full rounded-xl"
-              src="/images/code.jpg"
+              className="object-cover w-full xl:h-[9rem] md:h-[8rem] rounded-xl"
+              src={course.image != ""? course.image : "/images/code.jpg"}
             />
           </div>
 
           {/* Course Details */}
           <div className="px-4 pt-2 md:w-3/5 w-full flex flex-col justify-between">
             <div className="flex flex-col">
-              <h4 className="font-bold text-small sm:text-medium md:text-large mt-2 md:mt-0">
+              <h4 className="font-bold text-small sm:text-medium md:text-large mt-2 md:mt-0 md:line-clamp-2 line-clamp-1">
                 {course.name}
               </h4>
               <div className="flex flex-row justify-between items-center gap-2">
@@ -136,7 +111,7 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
 
         {/* Footer Section */}
         <CardFooter className="flex flex-col md:gap-4 gap-0 items-start justify-between h-full">
-          <p className="text-tiny px-2 overflow-hidden line-clamp-2">
+          <p className="text-tiny px-2 overflow-hidden md:line-clamp-2 line-clamp-1">
             {course.description}
           </p>
           <small className="w-full pr-2 text-default-500 text-tiny font-extralight italic text-right">

@@ -50,6 +50,7 @@ interface Option {
     name: string;
     description: string;
     is_public: boolean;
+    image: string;
     modules: Module[];
   }
 
@@ -63,6 +64,7 @@ interface Option {
 interface CoursePreview {
   id: string;
   name: string;
+  image: string;
   description: string;
   author: Author;
   last_updated: string;
