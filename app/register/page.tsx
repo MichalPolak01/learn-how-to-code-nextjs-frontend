@@ -10,9 +10,10 @@ import { useRouter } from "next/navigation";
 
 import { validateEmail, validatePassword } from "@/lib/formValidators";
 import { useAuth } from "@/providers/authProvider";
+import { showToast } from "@/lib/showToast";
 
 
-const REGISTER_URL = "api/register"
+const REGISTER_URL = "api/auth/register"
 const LOGIN_URL = "/login"
 
 export default function Page() {
@@ -67,8 +68,7 @@ export default function Page() {
     
             if (response.status == 201) {
                 setRegisterError(false);
-                // TODO Add toast
-                console.log("Register success");
+                showToast("Rejestracja powiodła się.\nWitaj w LearnHowToCode!", false);
                 router.push(LOGIN_URL);
             } else if (response.status == 400) {
                 setRegisterError(true);
@@ -83,15 +83,13 @@ export default function Page() {
                 } else {
                     setRegisterMessage("Podczas tworzenia konta wystąpił nieoczekiwany błąd. Spróbuj ponownie później.");
                 }
-                
-                // TODO Add toast
-                console.log("Account update failed");
+                showToast("Rejestracja nieudana. Sprawdź poprawność wprowadzoanych danych.", true);
             } else if (response.status == 401) {
                 auth.loginRequired();
             } else {
                 setRegisterError(true);
                 setRegisterMessage("Podczas logowania wystąpił nieoczekiwany błąd servera. Spróbuj ponownie później.");
-                console.log("Register failed");
+                showToast("Rejestracja nieudana. Sprawdź poprawność wprowadzoanych danych.", true);
             }
         }
     }

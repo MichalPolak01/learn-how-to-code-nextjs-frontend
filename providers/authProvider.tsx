@@ -31,8 +31,7 @@ interface AuthProviderProps {
     children: React.ReactNode
 }
 
-
-export function AuthProvider({children}: AuthProviderProps) {
+export function AuthProvider({ children }: AuthProviderProps) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState("");
     const [role, setRole] = useState("");
@@ -43,14 +42,14 @@ export function AuthProvider({children}: AuthProviderProps) {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        
+
         const checkToken = async () => {
             const token = localStorage.getItem(LOCAL_TOKEN_KEY);
 
             if (token) {
                 if (isTokenExpired(token)) {
                     loginRequired();
-                    
+
                     return;
                 }
 
@@ -58,7 +57,7 @@ export function AuthProvider({children}: AuthProviderProps) {
                 setAuthToken(token);
             } else {
                 loginRequired();
-                    
+
                 return;
             }
 
@@ -67,18 +66,18 @@ export function AuthProvider({children}: AuthProviderProps) {
             if (storedUsername) {
                 setUsername(storedUsername);
             }
-            
+
             const storedRole = localStorage.getItem(LOCAL_ROLE_KEY);
 
             if (storedRole) {
                 setRole(storedRole);
-            }    
+            }
         }
 
         checkToken();
     }, []);
 
-    const login = async(username?: string, role?: string, authToken?: string, refreshToken?: string) => {
+    const login = async (username?: string, role?: string, authToken?: string, refreshToken?: string) => {
         if (authToken) {
             setToken(authToken);
             setAuthToken(authToken);
@@ -96,7 +95,7 @@ export function AuthProvider({children}: AuthProviderProps) {
             setUsername("");
         }
 
-        if(role) {
+        if (role) {
             localStorage.setItem(LOCAL_ROLE_KEY, role);
             setRole(role);
         } else {
@@ -121,7 +120,7 @@ export function AuthProvider({children}: AuthProviderProps) {
         deleteServerTokens();
         localStorage.removeItem(LOCAL_USERNAME_KEY);
         localStorage.removeItem(LOCAL_ROLE_KEY);
-        
+
         router.replace(LOGOUT_REDIRECT_URL);
     }
 

@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes = {
-    // "/": ['USER', 'TEACHER'],
     "/account-settings": ['USER', 'TEACHER'],
     "/change-password": ['USER', 'TEACHER'],
     "/home": ['USER', 'TEACHER'],
@@ -42,7 +41,7 @@ export default async function middleware(request:NextRequest) {
         const allowedRoles = protectedRoutes[path as keyof typeof protectedRoutes];
 
         if (!userRole || !allowedRoles.includes(userRole) || !isAuthenticated) {
-            return NextResponse.redirect(new URL('/login', request.nextUrl));
+            return NextResponse.redirect(new URL('/', request.nextUrl));
         }
     }
 

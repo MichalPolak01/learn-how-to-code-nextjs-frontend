@@ -51,24 +51,24 @@ export default function AssignmentPage({ params }: { params: { id: string; lesso
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-  
+
       if (response.status === 401) {
         auth.loginRequired();
 
         return null;
       }
-  
+
       if (response.status === 403) {
         showToast("Nie masz odpowiednich uprawnień, aby zobaczyć tę lekcję.", true);
         router.push(id ? `/courses/${id}` : `/courses`);
 
         return null;
       }
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch assignment.");
       }
-  
+
       const data = await response.json();
 
       setAssignment(data.assignment?.instructions || null);
@@ -79,31 +79,31 @@ export default function AssignmentPage({ params }: { params: { id: string; lesso
       return null;
     }
   };
-  
+
   const fetchStats = async () => {
     try {
       const response = await fetch(`${COURSE_URL}/${id}/stats`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-  
+
       if (response.status === 401) {
         auth.loginRequired();
 
         return null;
       }
-  
+
       if (response.status === 403) {
         showToast("Nie masz odpowiednich uprawnień, aby zobaczyć statystyki.", true);
         router.push(id ? `/courses/${id}` : `/courses`);
 
         return null;
       }
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch stats.");
       }
-  
+
       const stats = await response.json();
 
       setAllLessonStats(stats);
@@ -231,7 +231,7 @@ export default function AssignmentPage({ params }: { params: { id: string; lesso
     }
 
     const isLessonUnlocked = (lessonId: string) => allLessonStats.some((stat: any) => stat.lesson_id == lessonId);
-  
+
     if (currentLessonIndex + 1 < currentModule.lessons.length) {
       const nextLesson = currentModule.lessons[currentLessonIndex + 1];
 
@@ -372,7 +372,6 @@ export default function AssignmentPage({ params }: { params: { id: string; lesso
         </div>
       </Card>
 
-      {/* Assignment response */}
       {showModal && evaluatedAssignment && (
         <Modal
           backdrop="opaque"

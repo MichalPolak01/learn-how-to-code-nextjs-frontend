@@ -102,22 +102,22 @@ export default function CourseCarusel({ title, sortBy }: CourseCaruselProps) {
     const checkIsEnrolled = async () => {
 
       const response = await fetch(`${COURSE_URL}/0/enroll`, {
-          method: "GET",
-          headers: {
-              "Content-Type": "application/json",
-          },
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (response.ok) {
-          const data: number[] = await response.json();
+        const data: number[] = await response.json();
 
-          setIsEnrolled(data)
+        setIsEnrolled(data)
       } else if (response.status == 401) {
-          auth.loginRequired();
+        auth.loginRequired();
       } else {
-          // Do nothing
+        // Do nothing
       }
-  }
+    }
 
     fetchCourses();
     checkIsEnrolled();

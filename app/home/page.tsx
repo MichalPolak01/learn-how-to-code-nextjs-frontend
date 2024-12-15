@@ -24,35 +24,35 @@ export default function Home() {
 
     useEffect(() => {
         const fetchCourses = async () => {
-    
-          const response = await fetch(COURSES_STATS_URL, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-    
-          if (response.ok) {
-            const data: CourseStats = await response.json();
-    
-            setCoursesStats(data);
-          } else if (response.status == 401) {
-            auth.loginRequired();
-          } else {
-            showToast("Nie udało się wczytać statystyk.", true);
-          }
+
+            const response = await fetch(COURSES_STATS_URL, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                const data: CourseStats = await response.json();
+
+                setCoursesStats(data);
+            } else if (response.status == 401) {
+                auth.loginRequired();
+            } else {
+                showToast("Nie udało się wczytać statystyk.", true);
+            }
         };
-    
+
         fetchCourses();
-      }, []);
+    }, []);
 
     return (
         <div>
             <div className="relative h-[24rem] w-full sm:py-8 py-3 sm:px-16 px-0 rounded-2xl overflow-hidden flex flex-col justify-between">
-                <Image 
-                    alt="Home background" 
-                    className="absolute inset-0 object-cover w-full h-full blur-sm" 
-                    height={100} 
+                <Image
+                    alt="Home background"
+                    className="absolute inset-0 object-cover w-full h-full blur-sm"
+                    height={100}
                     src="/images/home.jpg"
                     width={100}
                 />
@@ -61,7 +61,7 @@ export default function Home() {
 
                 <div className='flex flex-col gap-2 sm:scale-100 scale-80'>
                     <h1 className="relative z-10 text-white text-4xl font-semibold italic">
-                        Witaj ponownie w <span className='text-primary-500 font-bold'>LearnHowToCode!</span> 
+                        Witaj ponownie w <span className='text-primary-500 font-bold'>LearnHowToCode!</span>
                     </h1>
                     <h2 className="relative z-10 text-white text-lg font-extralight italic">
                         Jakiego języka programowania się dziś nauczysz?
@@ -73,23 +73,23 @@ export default function Home() {
                         <div className='flex flex-row gap-6'>
                             <div className='flex flex-col  items-center'>
                                 <h4 className='text-2xl text-success font-bold'>
-                                <CountUp duration={5} end={coursesStats?.courses_count || 0} start={0} />
+                                    <CountUp duration={5} end={coursesStats?.courses_count || 0} start={0} />
                                 </h4>
-                                <h5 className='text-sm uppercase font-light text-white text-center'>Unikatowych<br/>Kursów</h5>
+                                <h5 className='text-sm uppercase font-light text-white text-center'>Unikatowych<br />Kursów</h5>
                             </div>
                             <Divider className='bg-white' orientation='vertical' />
                             <div className='flex flex-col  items-center'>
                                 <h4 className='text-2xl text-success font-bold'>
-                                <CountUp duration={5} end={coursesStats?.students_count || 0} start={0} />
+                                    <CountUp duration={5} end={coursesStats?.students_count || 0} start={0} />
                                 </h4>
-                                <h5 className='text-sm uppercase font-light text-white text-center'>Zadowolonych<br/>kursantów</h5>
+                                <h5 className='text-sm uppercase font-light text-white text-center'>Zadowolonych<br />kursantów</h5>
                             </div>
                             <Divider className='bg-white' orientation='vertical' />
                             <div className='flex flex-col  items-center'>
                                 <h4 className='text-2xl text-success font-bold'>
                                     <CountUp duration={5} end={coursesStats?.completed_lessons || 0} start={0} />
                                 </h4>
-                                <h5 className='text-sm uppercase font-light text-white text-center'>Ukończonych<br/>lekcji</h5>
+                                <h5 className='text-sm uppercase font-light text-white text-center'>Ukończonych<br />lekcji</h5>
                             </div>
                         </div>
                     </div>

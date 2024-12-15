@@ -20,7 +20,7 @@ export function getRefreshToken(): string | null {
 
 export function setRefreshToken(authRefreshToken: string): void {
     localStorage.setItem(TOKEN_REFRESH_NAME, authRefreshToken);
-} 
+}
 
 export function deleteTokens(): void {
     localStorage.removeItem(TOKEN_NAME);

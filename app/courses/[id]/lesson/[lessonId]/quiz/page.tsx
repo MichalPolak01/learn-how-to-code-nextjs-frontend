@@ -146,7 +146,7 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
         throw new Error("Response not ok.")
       }
 
-    } catch {}
+    } catch { }
   }
 
   const handleBackToCourse = () => {
@@ -178,15 +178,15 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
               </div>
             </div>
             {currentQuestion?.question &&
-            <div dangerouslySetInnerHTML={{ __html: currentQuestion?.question }} className="mt-4 text-lg" />
+              <div dangerouslySetInnerHTML={{ __html: currentQuestion?.question }} className="mt-4 text-lg" />
             }
             <div className="options-container mt-4">
               {currentQuestion?.answers.map((option) => (
                 <button
                   key={option.id}
                   className={`option-button ${selectedOption === option.id
-                      ? "bg-blue-500 text-white"
-                      : "bg-default-200"
+                    ? "bg-blue-500 text-white"
+                    : "bg-default-200"
                     } p-2 rounded-lg my-2 w-full text-left`}
                   onClick={() => handleOptionSelect(option.id)}
                 >
@@ -207,20 +207,20 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
         ) : (
           <div className="flex flex-col gap-4 items-center">
             <h2 className="text-3xl text-primary font-bold mb-4">Podsumowanie Quizu</h2>
-            {Math.max(lessonStats.quiz_score, result) > 70?
-                <p className="text-3xl text-success">Quiz Zaliczony</p>
-                :
-                <p className="text-3xl text-danger">Quiz niezaliczony</p>
+            {Math.max(lessonStats.quiz_score, result) > 70 ?
+              <p className="text-3xl text-success">Quiz Zaliczony</p>
+              :
+              <p className="text-3xl text-danger">Quiz niezaliczony</p>
             }
             <p className="text-small font-light text-default-500">*Aby quiz był zaliczony, należy osiągnąć co najmniej 70% w najlepszym podejściu.</p>
             <h3 className="text-2xl text-primary mt-4">
               W tym podejściu zdobyto:{" "}
               <span
                 className={`${result >= 75
-                    ? "text-success"
-                    : result >= 0.5
-                      ? "text-warning"
-                      : "text-danger"
+                  ? "text-success"
+                  : result >= 0.5
+                    ? "text-warning"
+                    : "text-danger"
                   } font-bold`}
               >
                 {result}%
@@ -230,10 +230,10 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
               Punkty:{" "}
               <span
                 className={`${result >= 75
-                    ? "text-success"
-                    : result >= 0.5
-                      ? "text-warning"
-                      : "text-danger"
+                  ? "text-success"
+                  : result >= 0.5
+                    ? "text-warning"
+                    : "text-danger"
                   } font-bold`}
               >
                 {score}/{quiz.questions.length}
@@ -241,18 +241,17 @@ export default function QuizPage({ params }: { params: { id: string; lessonId: s
             </p>
             <h3 className="text-2xl text-primary mt-4">
               W najlepszym podejściu zdobyto:{" "}
-              <span 
+              <span
                 className={`${Math.max(result, lessonStats.quiz_score) >= 75
-                    ? "text-success"
-                    : Math.max(result, lessonStats.quiz_score) >= 0.5
-                      ? "text-warning"
-                      : "text-danger"
+                  ? "text-success"
+                  : Math.max(result, lessonStats.quiz_score) >= 0.5
+                    ? "text-warning"
+                    : "text-danger"
                   } font-bold`}
               >
                 {Math.max(result, lessonStats.quiz_score)}%
               </span>
             </h3>
-
 
             <Button className="mt-8 hover:scale-105" color="primary" variant="shadow" onClick={handleRestartQuiz}>
               Uruchom ponownie quiz

@@ -33,9 +33,8 @@ export default function FilterCarousel({
             {options.map(({ filter, icon: Icon, text }) => (
                 <button
                     key={filter}
-                    className={`px-4 py-2 rounded ${
-                        activeFilter === filter ? "bg-primary text-white" : "bg-default-300 text-default-700"
-                    }`}
+                    className={`px-4 py-2 rounded ${activeFilter === filter ? "bg-primary text-white" : "bg-default-300 text-default-700"
+                        }`}
                     onClick={() => {
                         onFilterChange(filter);
                     }}

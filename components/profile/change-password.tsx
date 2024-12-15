@@ -10,7 +10,7 @@ import { validatePassword } from "@/lib/formValidators";
 import { useAuth } from "@/providers/authProvider";
 
 
-const CHANGE_PASSWORD_URL = "api/change-password"
+const CHANGE_PASSWORD_URL = "api/auth/change-password"
 
 export default function ChangePassword() {
     const [isOldPasswordVisible, setIsOldPasswordVisible] = React.useState(false);
@@ -135,7 +135,7 @@ export default function ChangePassword() {
             <h1 className="text-primary text-2xl font-semibold mb-2">Zmiana hasła</h1>
             <p className={`${passwordChangeError == 1 ? "text-danger-500" : passwordChangeError == 2 ? "text-success-500" : "text-default-600"}`}>{passwordChangeMessage}</p>
             <form className="overflow-visible flex flex-col gap-3 mt-6" onSubmit={handleSubmit}>
-                 <Input
+                <Input
                     autoComplete="username"
                     className="invisible h-0"
                     color="default"

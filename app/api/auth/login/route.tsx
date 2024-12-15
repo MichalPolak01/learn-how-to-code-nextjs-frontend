@@ -2,7 +2,7 @@
 
 import { NextResponse } from "next/server"
 
-import ApiProxy from "../proxy";
+import ApiProxy from "../../proxy";
 
 import { setRefreshToken, setRole, setToken } from "@/lib/authServer";
 
@@ -17,7 +17,7 @@ interface LoginResponse {
 
 export async function POST(request: Request) {
     const requestData = await request.json();
-    const {data, status} = await ApiProxy.post(DJANGO_API_LOGIN_URL, requestData, false);
+    const { data, status } = await ApiProxy.post(DJANGO_API_LOGIN_URL, requestData, false);
 
     if (status === 200) {
         const loginData = data as LoginResponse;
@@ -27,5 +27,5 @@ export async function POST(request: Request) {
         setRole(loginData.role);
     }
 
-    return NextResponse.json(data, {status: status});
+    return NextResponse.json(data, { status: status });
 }

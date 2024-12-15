@@ -94,7 +94,6 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     };
   };
 
-
   const prepareCourseForApi = (course: Course): any => {
     const nextState = handleNextState();
 
@@ -135,7 +134,6 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
       })),
     };
   };
-
 
   useEffect(() => {
     const loadCourse = async () => {
@@ -193,7 +191,6 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     loadCourse();
   }, [courseId, auth, router]);
 
-
   const handleNextState = () => {
     if (courseData.creator_state === "edit") {
       return courseData.creator_state;
@@ -206,13 +203,12 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     return nextItem ? nextItem.value : courseData.creator_state;
   };
 
-
   const handleCreateCourse = async (e: React.FormEvent, generate: boolean) => {
     e.preventDefault();
 
     const validationResponse = validateCourseDetails(courseData);
 
-    if (validationResponse != "Walidacja powiodła się." ) {
+    if (validationResponse != "Walidacja powiodła się.") {
       setValidationMessage(validationResponse);
       setIsErrorOpen(true);
 
@@ -255,7 +251,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         let data: ResponseMessage = {};
 
         try {
-            data = await response.json();
+          data = await response.json();
         } catch { }
 
         if (data.message === "A course with this name already exists.") {
@@ -302,7 +298,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     if (publish) {
       const validationResponse = validateCourseBeforePublication(courseData);
 
-      if (validationResponse != "Walidacja powiodła się." ) {
+      if (validationResponse != "Walidacja powiodła się.") {
         setValidationMessage(validationResponse);
         setIsErrorOpen(true);
 
@@ -348,7 +344,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
     const validationResponse = validateModules(courseData);
 
-    if (validationResponse != "Walidacja powiodła się." ) {
+    if (validationResponse != "Walidacja powiodła się.") {
       setValidationMessage(validationResponse);
       setIsErrorOpen(true);
 
@@ -415,7 +411,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
 
     const validationResponse = validateModulesAndLessons(courseData);
 
-    if (validationResponse != "Walidacja powiodła się." ) {
+    if (validationResponse != "Walidacja powiodła się.") {
       setValidationMessage(validationResponse);
       setIsErrorOpen(true);
 
@@ -460,13 +456,13 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         if (response.status === 404) {
           showToast(`Nie znaleziono kursu o id ${courseId}.`, true);
           router.push("/not-found");
-  
+
           return;
         }
-  
+
         if (response.status === 400 || response.status === 422) {
           showToast("Podane dane są w nieodpowiednim formacie.", true);
-  
+
           return;
         }
 
@@ -486,13 +482,12 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     }
   };
 
-
   const handleUpdateCourse = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validationResponse = validateCourseDetails(courseData);
 
-    if (validationResponse != "Walidacja powiodła się." ) {
+    if (validationResponse != "Walidacja powiodła się.") {
       setValidationMessage(validationResponse);
       setIsErrorOpen(true);
 
@@ -511,7 +506,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     if (courseData.is_public) {
       const validationResponse = validateCourseBeforePublication(courseData);
 
-      if (validationResponse != "Walidacja powiodła się." ) {
+      if (validationResponse != "Walidacja powiodła się.") {
 
         courseData.is_public = !courseData.is_public;
       }
@@ -587,7 +582,6 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     }));
   };
 
-
   const handleUpdateModuleName = (id: string, newName: string) => {
     setCourseData((prev) => ({
       ...prev,
@@ -623,7 +617,6 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     }));
   };
 
-
   return (
     <div className="relative">
       {loading && (
@@ -635,14 +628,14 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         <Card className="p-8">
           <h1 className="text-3xl text-primary font-semibold">Kreator kursu</h1>
           <div className="flex flex-row mt-8 lg:justify-center items-center flex-wrap">
-              <RowSteps
-                currentStep={createCoursePath.findIndex(
-                  (step) => step.value === courseData.creator_state
-                )}
-                steps={createCoursePath.map((item, index) => ({
-                  title: `${index + 1}. ${item.label}`,
-                }))}
-              />
+            <RowSteps
+              currentStep={createCoursePath.findIndex(
+                (step) => step.value === courseData.creator_state
+              )}
+              steps={createCoursePath.map((item, index) => ({
+                title: `${index + 1}. ${item.label}`,
+              }))}
+            />
           </div>
         </Card>
 

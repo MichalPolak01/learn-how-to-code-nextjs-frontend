@@ -51,16 +51,16 @@ export default function QuizEditor({
       questions: quiz.questions.map((q, i) =>
         i === qIndex
           ? {
-              ...q,
-              answers: [
-                ...q.answers,
-                {
-                  id: Date.now().toString(),
-                  answer: `Nowa odpowiedź ${q.answers.length + 1}`,
-                  is_correct: false,
-                },
-              ],
-            }
+            ...q,
+            answers: [
+              ...q.answers,
+              {
+                id: Date.now().toString(),
+                answer: `Nowa odpowiedź ${q.answers.length + 1}`,
+                is_correct: false,
+              },
+            ],
+          }
           : q
       ),
     });
@@ -72,9 +72,9 @@ export default function QuizEditor({
       questions: quiz.questions.map((q, i) =>
         i === qIndex
           ? {
-              ...q,
-              answers: q.answers.filter((_, j) => j !== oIndex),
-            }
+            ...q,
+            answers: q.answers.filter((_, j) => j !== oIndex),
+          }
           : q
       ),
     });
@@ -86,11 +86,11 @@ export default function QuizEditor({
       questions: quiz.questions.map((q, i) =>
         i === qIndex
           ? {
-              ...q,
-              answers: q.answers.map((a, j) =>
-                j === oIndex ? { ...a, answer: value } : a
-              ),
-            }
+            ...q,
+            answers: q.answers.map((a, j) =>
+              j === oIndex ? { ...a, answer: value } : a
+            ),
+          }
           : q
       ),
     });
@@ -102,12 +102,12 @@ export default function QuizEditor({
       questions: quiz.questions.map((q, i) =>
         i === qIndex
           ? {
-              ...q,
-              answers: q.answers.map((a, j) => ({
-                ...a,
-                is_correct: j === oIndex,
-              })),
-            }
+            ...q,
+            answers: q.answers.map((a, j) => ({
+              ...a,
+              is_correct: j === oIndex,
+            })),
+          }
           : q
       ),
     });

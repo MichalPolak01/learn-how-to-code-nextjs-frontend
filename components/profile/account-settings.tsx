@@ -10,7 +10,7 @@ import { useAuth } from "@/providers/authProvider";
 import { showToast } from "@/lib/showToast";
 
 
-const ACCOUNT_SETTINGS_URL = "api/account-settings";
+const ACCOUNT_SETTINGS_URL = "api/auth/account-settings";
 
 export default function Page() {
     const [registerMessage, setRegisterMessage] = useState("Aby zaktualizować profil wprowadź wszystkie potrzebne dane i zapisz zminy.");

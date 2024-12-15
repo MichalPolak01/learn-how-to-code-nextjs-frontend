@@ -7,12 +7,9 @@ import { FileSpreadsheet, Pencil, StarIcon, Users } from "lucide-react";
 import { Image } from "@nextui-org/image";
 import { useRouter } from "next/navigation";
 import { Chip } from "@nextui-org/chip";
-import { useEffect, useState } from "react";
 
 import { useAuth } from "@/providers/authProvider";
 
-
-const IS_ENROLLED_URL = "/api/course"
 
 interface CardProps {
   course: CoursePreview;
@@ -20,7 +17,6 @@ interface CardProps {
 }
 
 export default function CourseCard({ course, isEnrolled }: CardProps) {
-  // const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const auth = useAuth();
   const router = useRouter();
 
@@ -56,7 +52,7 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
               isZoomed
               alt="Card image"
               className="object-cover w-full xl:h-[9rem] md:h-[8rem] rounded-xl"
-              src={course.image != ""? course.image : "/images/code.jpg"}
+              src={course.image != "" ? course.image : "/images/code.jpg"}
             />
           </div>
 

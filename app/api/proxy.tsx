@@ -1,5 +1,6 @@
 import { getToken } from "@/lib/authServer";
 
+
 interface ApiResponse<T> {
     data: T | null;
     status: number;
@@ -14,7 +15,7 @@ export default class ApiProxy {
             "Content-Type": "application/json",
             "Accept": "application/json",
         };
-        
+
         const authToken = await getToken();
 
         if (authToken && requireAuth) {

@@ -13,7 +13,7 @@ export default function CarouselOptions() {
 
     return (
         <div className="flex flex-row flex-wrap justify-center gap-3 py-5 mt-5">
-            {auth.role === "TEACHER" && 
+            {auth.role === "TEACHER" &&
                 <>
                     <OptionCard color="primary" href="course-wizard" icon={BadgePlus} text="Dodaj kurs" />
                     <OptionCard color="default-800" href="#my" icon={PencilLine} text="Moje kursy" />
@@ -23,6 +23,6 @@ export default function CarouselOptions() {
             <OptionCard color="default-800" href="#most-popular" icon={ChartSpline} text="Najpopularniejsze" />
             <OptionCard color="default-800" href="#latest" icon={Clock3} text="Najnowsze" />
             <OptionCard color="primary" href="/courses" icon={BookmarkCheck} text="Zapisane" />
-    </div>
+        </div>
     )
 }

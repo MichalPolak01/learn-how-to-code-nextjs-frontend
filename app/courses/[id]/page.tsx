@@ -93,6 +93,7 @@ export default function Course({ params }: { params: { id: string } }) {
       const response = await fetch(`${COURSE_URL}/${courseId}/enroll`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify('')
       });
 
       if (response.status === 401) {
@@ -219,7 +220,6 @@ export default function Course({ params }: { params: { id: string } }) {
                 Edit
               </div>
             </Button>
-
           }
         </div>
 
@@ -250,8 +250,8 @@ export default function Course({ params }: { params: { id: string } }) {
                       {lesson.introduction && (
                         <Card
                           className={`sm:w-[10rem] h-[6.5rem] hover:scale-110 ${introductionCompleted
-                              ? "bg-success-300 border-success-700"
-                              : "border-warning-600 bg-warning-50"
+                            ? "bg-success-300 border-success-700"
+                            : "border-warning-600 bg-warning-50"
                             } border-2`}
                         >
                           <Link
@@ -266,7 +266,6 @@ export default function Course({ params }: { params: { id: string } }) {
                               <div className=" w-[8rem] border-t-2 my-2 border-default-700">
                                 <p className="mt-2 text-sm text-center font-medium">Ukończono</p>
                               </div>
-
                             }
                           </Link>
                         </Card>
@@ -275,8 +274,8 @@ export default function Course({ params }: { params: { id: string } }) {
                       {lesson.quiz && (
                         <Card
                           className={`sm:w-[10rem] h-[6.5rem] hover:scale-110 ${quizPassed
-                              ? "bg-success-300 border-success-700"
-                              : "border-secondary-600 bg-secondary-50"
+                            ? "bg-success-300 border-success-700"
+                            : "border-secondary-600 bg-secondary-50"
                             } border-2`}
                         >
                           <Link
@@ -298,8 +297,8 @@ export default function Course({ params }: { params: { id: string } }) {
                       {lesson.assignment && (
                         <Card
                           className={`sm:w-[10rem] h-[6.5rem] hover:scale-110 ${assignmentPassed
-                              ? "bg-success-300 border-success-700"
-                              : "border-danger-600 bg-danger-50"
+                            ? "bg-success-300 border-success-700"
+                            : "border-danger-600 bg-danger-50"
                             } border-2`}
                         >
                           <Link

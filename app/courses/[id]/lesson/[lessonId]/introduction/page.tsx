@@ -19,7 +19,7 @@ interface IntroductionPageProps {
 
 const COURSE_URL = "/api/course";
 
-export default function IntroductionPage({params}: IntroductionPageProps) {
+export default function IntroductionPage({ params }: IntroductionPageProps) {
   const { id, lessonId } = params;
   const router = useRouter();
   const [introduction, setIntroduction] = useState<string | null>(null);
@@ -143,7 +143,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
       if (!response.ok) {
         throw new Error("Response not ok.")
       }
-    } catch {}
+    } catch { }
   }
 
   const handleNext = () => {
@@ -153,7 +153,6 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
   const handleBackToCourse = () => {
     router.push(`/courses/${id}`);
   };
-  
 
   if (!introduction) {
     return (
@@ -168,7 +167,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
     <div className="p-6">
       <div className="flex sm:flex-row flex-col gap-2 justify-between items-center mb-6 px-4">
         <h1 className="text-3xl text-primary font-bold">Wprowadzenie</h1>
-        {(lessonStats && lessonStats.introduction_completed) && <div className="flex items-center gap-2 text-success"><BadgeCheck/><span>Ukończono</span></div>}
+        {(lessonStats && lessonStats.introduction_completed) && <div className="flex items-center gap-2 text-success"><BadgeCheck /><span>Ukończono</span></div>}
       </div>
       <Card className="p-8">
         <div
@@ -178,7 +177,7 @@ export default function IntroductionPage({params}: IntroductionPageProps) {
       </Card>
       <div className="flex sm:flex-row flex-col-reverse gap-2 justify-between mt-8">
         <Button className="hover:scale-105" color="default" variant="light" onClick={handleBackToCourse}>
-          <ChevronLeft/><span className="underline text-md font-semibold underline-offset-1">Powrót do strony kursu</span>
+          <ChevronLeft /><span className="underline text-md font-semibold underline-offset-1">Powrót do strony kursu</span>
         </Button>
         <Button className="hover:scale-105" color="primary" variant="light" onClick={handleNext}>
           <span className="underline text-md font-semibold underline-offset-1">Przejdź do Quizu</span><ChevronRight />
