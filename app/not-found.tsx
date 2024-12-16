@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/button";
-import Image from 'next/image'
+import Image from 'next/image';
 
 export default function NotFoundPage() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -35,7 +35,7 @@ export default function NotFoundPage() {
                         layout="fill"
                         src="/images/question-mark.jpg"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-70 z-5" />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 z-5" />
 
                     <div
                         className="absolute w-40 h-40 bg-primary-500 bg-opacity-70 blur-3xl rounded-full pointer-events-none"

@@ -19,7 +19,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps | null>(null)
 
 const LOGIN_REDIRECT_URL = "/home"
-const LOGOUT_REDIRECT_URL = "/login"
+const LOGOUT_REDIRECT_URL = "/"
 const LOGIN_REQUIRED_URL = "/login"
 
 const LOCAL_TOKEN_KEY = "auth-token"

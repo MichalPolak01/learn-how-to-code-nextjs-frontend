@@ -24,9 +24,8 @@ export default function NavbarAccount() {
         </DropdownTrigger>
         <DropdownMenu aria-label="Profile Actions" variant="flat">
           <DropdownItem key="profile" className="h-14 gap-2">
-            <p className="font-semibold">Zalogowano jako</p>
-            <p className="font-semibold">{auth.username}</p>
-            <p className="font-semibold">{auth.role}</p>
+            <p className="font-semibold mb-1">Zalogowano jako</p>
+            <p className="font-semibold text-primary">{auth.username}</p>
           </DropdownItem>
           <DropdownItem key="settings" href="/profile">
             Ustawienia
