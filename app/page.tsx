@@ -49,7 +49,7 @@ export default function Home() {
             <span className="text-primary font-medium">LearnHowToCode</span> to Twoje centrum nauki programowania, które łączy najlepsze kursy, interaktywne zadania i&nbsp;quizy w jednym miejscu.
           </h2>
           <h3 className="text-white md:text-2xl text-lg text-center italic">
-            Dołącz do społeczności LearnHowToCode już dziś i zacznij tworzyć swój progamistyczny świat!
+            Dołącz do społeczności <span className="text-primary font-medium">LearnHowToCode</span> już dziś i zacznij tworzyć swój progamistyczny świat!
           </h3>
 
           <div className="flex sm:flex-row flex-col justify-center items-center sm:gap-8 gap-4 mt-4">

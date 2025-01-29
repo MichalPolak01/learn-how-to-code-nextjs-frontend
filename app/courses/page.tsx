@@ -85,6 +85,9 @@ export default function CoursesPage() {
                 </div>
             }
             <div className="flex flex-row flex-wrap gap-2 justify-center mt-4">
+                {courses.length === 0 &&
+                    <p className="font-semibold italic mt-8">Nie zapisałeś się jeszcze do żadnego kursu!</p>
+                }
                 {courses.map((course) => {
                     const enrolled = isEnrolled.includes(Number(course.id));
 

@@ -46,7 +46,6 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
             : null
         }
         <CardBody className="overflow-visible md:py-2 flex md:flex-row flex-col">
-          {/* Course Image */}
           <div className="md:w-2/5 w-full md:h-full h-24 overflow-hidden">
             <Image
               isZoomed
@@ -56,7 +55,6 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
             />
           </div>
 
-          {/* Course Details */}
           <div className="px-4 pt-2 md:w-3/5 w-full flex flex-col justify-between">
             <div className="flex flex-col">
               <h4 className="font-bold text-small sm:text-medium md:text-large mt-2 md:mt-0 md:line-clamp-2 line-clamp-1">
@@ -85,7 +83,6 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
               </div>
             </div>
 
-            {/* Course Stats */}
             <div className="flex flex-row justify-between items-end mt-4">
               <div className="flex flex-row gap-1 justify-center items-center">
                 <FileSpreadsheet />
@@ -105,7 +102,6 @@ export default function CourseCard({ course, isEnrolled }: CardProps) {
           </div>
         </CardBody>
 
-        {/* Footer Section */}
         <CardFooter className="flex flex-col md:gap-4 gap-0 items-start justify-between h-full">
           <p className="text-tiny px-2 overflow-hidden md:line-clamp-2 line-clamp-1">
             {course.description}

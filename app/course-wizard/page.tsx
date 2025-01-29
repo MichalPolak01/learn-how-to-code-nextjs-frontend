@@ -138,9 +138,9 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
   useEffect(() => {
     const loadCourse = async () => {
       if (!courseId) return;
-      setLoading(true);
-
+      
       try {
+        setLoading(true);
         const response = await fetch(`${COURSE_URL}/${courseId}`, {
           method: "GET",
           headers: {
@@ -421,10 +421,11 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
     try {
       for (const module of courseData.modules) {
         setLoading(true);
+
         if (module.lessons.length === 0) {
           setValidationMessage(`Moduł ${module.name} nie zawiera lekcji.`);
           setIsErrorOpen(true);
-
+          
           continue;
         }
 
@@ -471,13 +472,13 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
         }
 
         if (response.status === 201) {
-          showToast(`Lekcje zapisane pomyślnie.`, false);
-          handleUpdateCourseDetails(courseId, false);
+          showToast(`Zawartość lekcji w module ${module.name} zapisane pomyślnie.`, false);
         }
       }
     } catch (error) {
       showToast(`Nie udało się stworzyć lekcji. ${error}`, true);
     } finally {
+      handleUpdateCourseDetails(courseId, false);
       setLoading(false);
     }
   };
@@ -632,8 +633,8 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
               currentStep={createCoursePath.findIndex(
                 (step) => step.value === courseData.creator_state
               )}
-              steps={createCoursePath.map((item, index) => ({
-                title: `${index + 1}. ${item.label}`,
+              steps={createCoursePath.map((item) => ({
+                title: `${item.label}`,
               }))}
             />
           </div>
@@ -644,7 +645,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
             <h2 className="text-3xl text-primary font-semibold">Podstawowe informacje o&nbsp;kursie</h2>
             <div className=" flex md:flex-col flex-row md:items-end items-center gap-2">
               <Tooltip
-                content="Kurs można opublikować w ostatnim kroku kreatora."
+                content="Kurs można opublikować w ostatnim kroku kreatora"
                 isDisabled={courseData.creator_state === "edit"}
                 placement="top"
               >
@@ -685,7 +686,7 @@ export default function CourseWizard({ courseId }: CoursePageProps) {
               label="Opis kursu"
               labelPlacement="outside"
               name="description"
-              placeholder="Przedstaw swój kurs, aby zachęcić osby do udziału w nim."
+              placeholder="Przedstaw swój kurs, aby zachęcić użytkowników do udziału w nim."
               value={courseData.description}
               onChange={handleCourseChange}
             />

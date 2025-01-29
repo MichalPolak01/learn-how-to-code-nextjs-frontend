@@ -22,7 +22,7 @@ import { Logo } from "@/components/icons";
 import { useAuth } from "@/providers/authProvider";
 
 export const Navbar = () => {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const auth = useAuth();
   const navItems = auth.role === "TEACHER" ? siteConfig.navTeacherItems : siteConfig.navUserItems;
 

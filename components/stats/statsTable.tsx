@@ -55,7 +55,7 @@ export default function StatsTable({ courseStats, loading }: StatsTableProps) {
         return (
             <div className="flex flex-row gap-4 h-full justify-center items-center">
                 <Spinner />
-                <p className="text-md">Ładowanie Zadania...</p>
+                <p className="text-md">Ładowanie Rankingu...</p>
             </div>
         );
     }

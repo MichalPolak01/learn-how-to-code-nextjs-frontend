@@ -58,7 +58,7 @@ export default function RootLayout({
                 />
               </main>
               <footer className="z-50 container mx-auto flex flex-wrap gap-4 items-center sm:justify-between justify-center p-5 border-t-2 border-default-300 mt-10">
-                <span className="text-default-600">Copyright &copy; 2024 Michał Polak</span>
+                <span className="text-default-600">Copyright &copy; 2025 Michał Polak</span>
                 <Link
                   isExternal
                   className="flex items-center gap-1 text-current"
