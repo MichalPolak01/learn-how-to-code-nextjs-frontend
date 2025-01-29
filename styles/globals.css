@@ -1,3 +1,69 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.dark .prose {
+    --tw-prose-body: #d1d5db;
+    --tw-prose-headings: #f9fafb;
+    --tw-prose-links: #63b3ed;
+    --tw-prose-bullets: #a0aec0;
+    --tw-prose-pre-bg: #1a202c;
+  }
+
+.prose code {
+    color: #b50fdf;
+    background-color: #f7fafc;
+    border-radius: 0.25rem;
+  }
+  
+  .prose pre {
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+  
+  .dark .prose code {
+    color: #76d32a;
+    background-color: #2d3748;
+  }
+  
+  .dark .prose pre {
+    background-color: #2d3748;
+  }
+
+  .dark .prose strong {
+    color: #fff;
+    font-weight: bold;
+  }
+
+
+.scrollable-card {
+  overflow-y: auto;
+}
+
+.scrollable-card::-webkit-scrollbar {
+  width: 12px;
+}
+
+.scrollable-card::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 12px;
+  border: 2px solid #fff;
+}
+
+.scrollable-card::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+  border-radius: 12px;
+}
+
+.scrollable-card::-webkit-scrollbar-thumb:hover {
+  background-color: #2563eb;
+}
+
+@media only screen and (max-width: 500px) {
+  .vertical-tabs > div {
+    flex-direction: column;
+  }
+}
